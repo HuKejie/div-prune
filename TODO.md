@@ -108,5 +108,13 @@
       Fang Liu is not their advisor; the work is independent).
       zip rebuilt — RE-UPLOAD to the journal system if the uploaded copy
       still has the placeholder author block.
+- [x] Pre-upload polish (2026-09-10, commit c2e8344): Acknowledgments
+      placeholder removed (no funding); history block reduced to
+      \received{10 September 2026}; 7 doubled "Appendix Appendix" refs fixed
+      (Appendix~\ref -> \ref); Fig 1/3/4 value labels moved above the
+      error-bar caps and significance brackets re-anchored above the labels
+      (make_figures_pub.py _bar_hatch now returns label tops, per-figure
+      label_dy); recompiled 19 pages + zip rebuilt
+- [ ] Upload to the journal system (user action)
 - [ ] Await journal decision (watch submission system / email; on a new
       review round, route to review-response)

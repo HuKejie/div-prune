@@ -38,8 +38,8 @@ drafts, `*.py` utilities, PNG previews.
 
 - [x] Author names, affiliations, email (2026-09-10: Kejie Hu, City
       University of Wu Han, xshu1999@gmail.com; co-authors pending)
-- [ ] Funding info or remove the Acknowledgments section (`main.tex`)
-- [ ] History block dates (`\received/\revised/\accepted/\published` — fill
-      only the received date at submission if required)
+- [x] Funding: none — Acknowledgments section removed (2026-09-10)
+- [x] History block: `\received{(10 September 2026)}` only; the journal
+      fills the rest (2026-09-10)
 - [ ] Compile on Overleaf (pdflatex + bibtex; class expects bibtex, not biblatex)
 - [ ] Final `paper-self-review` pass after any content edits
