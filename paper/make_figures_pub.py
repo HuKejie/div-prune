@@ -84,14 +84,21 @@ def _adaptive(dense, ds):
             and r["lambda_schedule"] == ""]
 
 
-def _bar_hatch(fig, ax, x, means, stds, width, label, color, hatch) -> None:
+def _bar_hatch(fig, ax, x, means, stds, width, label, color, hatch,
+               label_dy: float = 2.0) -> list[float]:
     bars = ax.bar(x, means, width, yerr=stds, label=label, color=color,
                   capsize=3, edgecolor=color, linewidth=0.5, hatch=hatch,
                   error_kw={"elinewidth": 0.8, "ecolor": INK})
-    for bar, m in zip(bars, means):
+    # Value labels sit above each bar's error-bar cap (m + s); label_dy is
+    # in data units and must clear the 3 pt cap at the axes' unit scale.
+    label_tops = []
+    for bar, m, s in zip(bars, means, stds):
         if np.isfinite(m):
-            ax.text(bar.get_x() + bar.get_width() / 2, m + max(0.4, np.nanmax(stds) * 0.35),
+            y = m + s + label_dy
+            ax.text(bar.get_x() + bar.get_width() / 2, y,
                     f"{m:.1f}", ha="center", va="bottom", fontsize=7, color=INK)
+            label_tops.append(y)
+    return label_tops
 
 
 def fig1_h1(rows: list[dict]) -> None:
@@ -112,7 +119,8 @@ def fig1_h1(rows: list[dict]) -> None:
             m, s = _mean_std(sel(dense, ds))
             means.append(m * 100)
             stds.append(s * 100)
-        _bar_hatch(fig, ax, x + (i - 1) * w, means, stds, w, label, color, hatch)
+        _bar_hatch(fig, ax, x + (i - 1) * w, means, stds, w, label, color, hatch,
+                   label_dy=2.2)
     ax.set_xticks(x)
     ax.set_xticklabels(["Cora", "Citeseer", "Pubmed"])
     ax.set_ylabel("Test accuracy (%)")
@@ -185,15 +193,15 @@ def fig3_h3(rows: list[dict]) -> None:
     fig, ax = plt.subplots(figsize=(5.5, 3.8))
     x = np.arange(len(ratios))
     w = 0.26
-    bar_tops = []
+    label_tops = []
     for i, (label, sel, color, hatch) in enumerate(groups):
         means, stds = [], []
         for ratio in ratios:
             m, s = _mean_std(sel(rows, ratio))
             means.append(m * 100)
             stds.append(s * 100)
-        _bar_hatch(fig, ax, x + (i - 1) * w, means, stds, w, label, color, hatch)
-        bar_tops.append([m + s for m, s in zip(means, stds)])
+        label_tops += _bar_hatch(fig, ax, x + (i - 1) * w, means, stds, w,
+                                 label, color, hatch, label_dy=2.0)
 
     def _pairs(sel, ratio):
         return {int(r["seed"]): float(r["test_acc"])
@@ -201,7 +209,7 @@ def fig3_h3(rows: list[dict]) -> None:
 
     # Paired Wilcoxon, appendix convention (final_stats.py): one-sided
     # alternative="greater" with B8 as the first argument.
-    y_annot = max(max(t) for t in bar_tops) + 1.5
+    y_annot = max(label_tops) + 1.8
     p_b8b6: dict[str, float] = {}
     p_b8b5: dict[str, float] = {}
     for j, ratio in enumerate(ratios):
@@ -258,22 +266,22 @@ def fig4_baselines(rows: list[dict]) -> None:
     fig, ax = plt.subplots(figsize=(6.5, 3.8))
     x = np.arange(len(datasets))
     w = 0.2
-    bar_tops = []
+    label_tops = []
     for i, (label, sel, color, hatch) in enumerate(configs):
         means, stds = [], []
         for ds in datasets:
             m, s = _mean_std(sel(dense, ds))
             means.append(m * 100)
             stds.append(s * 100)
-        _bar_hatch(fig, ax, x + (i - 1.5) * w, means, stds, w, label, color, hatch)
-        bar_tops.append([m + s for m, s in zip(means, stds)])
+        label_tops += _bar_hatch(fig, ax, x + (i - 1.5) * w, means, stds, w,
+                                 label, color, hatch, label_dy=1.6)
 
     def _pairs(sel, ds):
         return {int(r["seed"]): float(r["test_acc"])
                 for r in sel(dense, ds) if r["test_acc"] not in ("", "nan")}
 
     # Significance brackets: controller vs GradNorm (one-sided paired Wilcoxon).
-    y_annot = max(max(t) for t in bar_tops) + 1.5
+    y_annot = max(label_tops) + 1.8
     ctrl_sel = lambda d, ds: _controller(d, ds)
     gn_sel = lambda d, ds: _b1_sched(d, ds, "gradnorm")
     for j, ds in enumerate(datasets):

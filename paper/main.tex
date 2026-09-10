@@ -32,10 +32,7 @@ Attention: Enforcing a Similarity Budget Late in Training}
 \maketitle
 
 \begin{history}
-\received{(Day Month Year)}
-\revised{(Day Month Year)}
-\accepted{(Day Month Year)}
-\published{(Day Month Year)}
+\received{(10 September 2026)}
 \end{history}
 
 \begin{abstract}
@@ -109,7 +106,7 @@ $p=0.001$) and shows no significant difference from small students trained
 from scratch with KD at identical budgets: the structured student reaches
 the accuracy of the from-scratch student through the pruning path, with no
 wall-time saving (Cora; the other two datasets in
-Appendix~\ref{app:h3ext}). Second, a strict paired
+\ref{app:h3ext}). Second, a strict paired
 comparison of pruning criteria (similarity vs.\ gradient, random, and
 magnitude) finds no reliable difference among them at GAT scale: 100 epochs of
 fine-tuning erase criterion choice. We report this as a negative result,
@@ -130,7 +127,7 @@ judged after retraining, not before.
   difference from pure-KD students at matched head budgets, and KD recovers
   +2.1--2.4 points over fine-tuning alone ($p=0.001$, Cohen's $d \approx 2.1$;
   Cora in the main text, Citeseer/Pubmed extension in
-  Appendix~\ref{app:h3ext}).
+  \ref{app:h3ext}).
 \item A strict negative result on pruning-criterion choice at GAT scale
   (paired Wilcoxon signed-rank tests over identical seeds, effect sizes,
   multiplicity discussion), plus a mechanism consistent with the data: at the
@@ -266,7 +263,7 @@ so the weight builds up over the $\sim$100-epoch late phase rather than
 overshooting within a few epochs; and $\lambda_{\max}=3.0$ sits below the
 regime ($\lambda \ge 5$) where fixed weights become harmful
 (Sec.~\ref{sec:spectrum}). A sensitivity grid over $(\eta, d^*)$ is reported
-in Appendix~\ref{app:sens}. The ceiling is a stability
+in \ref{app:sens}. The ceiling is a stability
 guard, not an operating point: $\lambda$ converges below it on every run
 (final values 0.27--1.94 per dataset at the chosen gain; a $4\times$-gain
 probe on Pubmed saturates the ceiling, Sec.~\ref{sec:h1}). The update is cheap (one
@@ -393,7 +390,7 @@ barely moves (0.988). A second-revision probe quadrupled the gain
 similarity still barely moves (0.993). The Pubmed run is thus
 \emph{response-limited}: its similarity responds too slowly to the penalty at
 any weight within the configured ceiling, so more gain does not buy the
-budget there (Appendix~\ref{app:sens}).
+budget there (\ref{app:sens}).
 
 \begin{figure}[t]
 \centerline{\includegraphics[width=5in]{figures/fig2_trace_cora_seed3.pdf}}
@@ -553,7 +550,7 @@ $80.60 \pm 1.05$~pp at 2/8 heads, so prune+fine-tuning (B6) sits
 architecture. Pruning followed by plain fine-tuning is a small net loss on
 Cora relative to training the matched small architecture from scratch, and KD
 recovers it. The same four arms on Citeseer and Pubmed
-(Appendix~\ref{app:h3ext}) do not show this loss: B6 is at or above B4 in
+(\ref{app:h3ext}) do not show this loss: B6 is at or above B4 in
 three of the four extension cells (Citeseer $+0.65$~pp at ratio 0.75; Pubmed
 $+0.24$~pp at 0.5 and $+1.36$~pp at 0.75; Citeseer at 0.5: $-0.25$~pp).
 There, pruning inherits the dense teacher's initialization before fine-tuning,
@@ -588,7 +585,7 @@ accuracy; the first feedback-controlled diversity regularizer we are aware
 of. The budget is met on Cora, partially met on Citeseer, and
 response-limited on Pubmed (Sec.~\ref{sec:h1}); this dataset dependence
 is the main caveat on the claim's generality. The sensitivity grid in
-Appendix~\ref{app:sens} shows accuracy is stable across $(\eta, d^*)$ on
+\ref{app:sens} shows accuracy is stable across $(\eta, d^*)$ on
 Cora; it does not transfer that promise to Pubmed, where a $4\times$ gain
 saturates the ceiling without moving similarity (Sec.~\ref{sec:h1}). The
 controller does not reduce similarity at the best checkpoint
@@ -665,7 +662,7 @@ baseline. The late phase gets there on Cora (similarity 0.71), substantially
 on Citeseer (0.85), and not on Pubmed, where the similarity response is too
 slow; we document this dataset dependence rather than hide it
 (Sec.~\ref{sec:h1},
-Appendix~\ref{app:sens}). Against adaptive baselines, the
+\ref{app:sens}). Against adaptive baselines, the
 controller enforces the budget late while preserving accuracy; GradNorm
 enforces it at the best checkpoint and pays 1.1--1.8 points for it, and the
 linear and Kendall schedules match the controller's accuracy without
@@ -682,10 +679,6 @@ effect. The
 practical lesson: for small multi-head models, control the regularizer,
 not the hyperparameter; and pair any pruning criterion with KD, since KD
 dominates criterion choice at this scale.
-
-\section*{Acknowledgments}
-
-This work was supported by [FUNDING SOURCE -- TODO]. % TODO: fill or remove
 
 % ---------------------------------------------------------------------------
 \bibliographystyle{ws-ijprai}
