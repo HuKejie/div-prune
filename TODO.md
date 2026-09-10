@@ -78,4 +78,29 @@
       gone in the 09-10 draft. Kept per M6 decision: "released upon
       acceptance" placeholder. Recompiled (0 errors, 0 overfull, 19 pages) +
       zip rebuilt.
-- [ ] Resubmit (user action: upload zip contents to the journal system)
+- [x] Code release prep (2026-09-10, repo public at
+      https://github.com/HuKejie/div-prune): LICENSE (MIT) + README rewrite
+      (paper title/link, reproducibility notes); .gitignore reworked so the
+      public repo carries code + paper sources + the 13 evidence CSVs
+      (results_clean.csv + outputs_rev2_*/tables/results.csv) + Colab
+      notebooks, while excluding datasets (118M), checkpoints (43M),
+      submission zips, internal review artifacts
+      (paper/reviewer-simulation-*.md, paper/self-review-*.md), and drafts.
+      Paper updated: contribution 4 + limitations (6) now cite the repo URL;
+      SUBMISSION-README synced (25 refs, 20260910 zip); recompiled
+      (0 errors, 0 overfull, 19 pages) + zip rebuilt.
+      Commit 5ad376d (initial, branch main, 128 files). R3/R4 simulation
+      files archived to paper/ (gitignored from the public repo).
+- [x] Push to GitHub (2026-09-10, via Clash proxy 127.0.0.1:7890):
+      `main -> main` on origin, 128 files. Repo live at
+      https://github.com/HuKejie/div-prune
+- [x] Commit rewritten without the Co-Authored-By trailer
+      (user request): amended to 69fa104 and force-pushed
+      (`5ad376d...69fa104 main -> main`). Future commits in this repo
+      carry no Claude attribution line.
+- [ ] Set repo visibility to Public (user action: repo Settings ->
+      General -> Danger Zone -> Change repository visibility -> Public)
+- [x] Resubmit (2026-09-10: repo set to Public +
+      ijprai-submission-20260910.zip uploaded to the journal system)
+- [ ] Await journal decision (watch submission system / email; on a new
+      review round, route to review-response)
