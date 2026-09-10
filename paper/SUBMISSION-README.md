@@ -36,7 +36,8 @@ drafts, `*.py` utilities, PNG previews.
 
 ## TODO before submission
 
-- [ ] Real author names, affiliations, email (placeholders in `main.tex`)
+- [x] Author names, affiliations, email (2026-09-10: Kejie Hu, City
+      University of Wu Han, xshu1999@gmail.com; co-authors pending)
 - [ ] Funding info or remove the Acknowledgments section (`main.tex`)
 - [ ] History block dates (`\received/\revised/\accepted/\published` — fill
       only the received date at submission if required)
