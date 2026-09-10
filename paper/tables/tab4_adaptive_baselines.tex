@@ -1,0 +1,29 @@
+% Table (number assigned by position): adaptive-baseline comparison
+% (M1 revision, Colab batch B1). WS-IJPRAI table format. Numbers:
+% stats-appendix.md R1 (2026-09-06). Controller rows: submitted dense
+% adaptive block (distill=False), n=10 per dataset.
+\begin{table}[th]
+\tbl{Controller vs.\ adaptive baselines (one-sided paired tests, 10 seeds). Accuracy is mean~$\pm$~std per cell; $\lambda_{\mathrm{final}}$ and $d_{\mathrm{best}}$ are the mean final controller weight and the inter-head similarity at the best checkpoint. GradNorm is the only baseline whose best-checkpoint similarity reaches the budget, at a significant accuracy cost; linear and Kendall schedules stay accuracy-neutral and do not enforce the budget at the best checkpoint. The controller enforces the budget late in training while matching baseline accuracy (late-phase similarity was not logged for the three baselines).
+\label{tab:adaptive-baselines}}
+{\begin{tabular}{llccccc}
+\toprule
+Dataset & Schedule & Test acc.\ (\%) & $\lambda_{\mathrm{final}}$ & $d_{\mathrm{best}}$ & $\Delta$ vs.\ ctrl.\ (pp) & $p$ (paired) \\
+\colrule
+Cora & Controller & $80.79 \pm 0.92$ & 0.84 & 0.934 & --- & --- \\
+ & Linear & $80.83 \pm 1.05$ & 0.87 & 0.924 & $-0.04$ & 0.4531 \\
+ & Kendall & $80.83 \pm 1.21$ & 1.37 & 0.849 & $-0.04$ & 0.5781 \\
+ & Gradnorm & $79.04 \pm 1.57$ & 1.95 & 0.693 & $+1.75$ & 0.0098 \\
+\colrule
+Citeseer & Controller & $68.46 \pm 1.35$ & 0.27 & 0.988 & --- & --- \\
+ & Linear & $68.94 \pm 1.01$ & 0.30 & 0.976 & $-0.48$ & 0.7764 \\
+ & Kendall & $68.66 \pm 0.90$ & 1.10 & 0.969 & $-0.20$ & 0.6055 \\
+ & Gradnorm & $67.36 \pm 1.35$ & 1.95 & 0.688 & $+1.10$ & 0.0527 \\
+\colrule
+Pubmed & Controller & $77.44 \pm 0.67$ & 1.94 & 0.996 & --- & --- \\
+ & Linear & $77.23 \pm 0.79$ & 1.67 & 0.995 & $+0.21$ & 0.3477 \\
+ & Kendall & $77.32 \pm 0.76$ & 1.26 & 0.996 & $+0.12$ & 0.3389 \\
+ & Gradnorm & $76.07 \pm 0.67$ & 1.95 & 1.000 & $+1.37$ & 0.0049 \\
+\colrule
+\botrule
+\end{tabular}}
+\end{table}

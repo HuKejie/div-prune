@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Data (downloaded datasets stay out of git)
+data/
+!data/.gitkeep
+
+# Experiment outputs: keep only the merged paper tables (evidence for the
+# manuscript numbers). Checkpoints and per-run logs stay local.
+# NOTE: exceptions must come AFTER the global *.csv rule, and top-level
+# exclusions must use "dir/*" (not "dir/") so the parent directory itself
+# stays traversable — otherwise re-inclusion of files inside it is ignored.
+*.csv
+*.pt
+*.pth
+*.log
+/outputs/*
+!/outputs/tables/
+/outputs/tables/*
+!/outputs/tables/results_clean.csv
+/outputs_ckpt/
+/outputs_smoke/
+/outputs_rev2_*/*
+!/outputs_rev2_*/tables/
+/outputs_rev2_*/tables/*
+!/outputs_rev2_*/tables/results.csv
+
+# Submission zips (paper sources live in paper/)
+ijprai-submission-*.zip
+
+# Notebooks / Colab
+.ipynb_checkpoints/
+
+# Internal review artifacts (not part of the public release)
+paper/reviewer-simulation-*.md
+paper/self-review-*.md
+paper/draft-*.md
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/pass3.log
+
+# OS
+Thumbs.db
+.DS_Store
+/foo/
+!/foo/bar/
+/foo/bar/*
+!/foo/bar/keep.csv

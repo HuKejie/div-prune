@@ -1,0 +1,36 @@
+% Table 1: fixed-lambda failure spectrum (Cora) + H1 main comparison.
+% WS-IJPRAI table format (caption above via \tbl). Numbers: stats-appendix.md
+% (updated 2026-09-08), results_clean.csv + outputs_rev2_sweep.
+\begin{table}[th]
+\tbl{Fixed-$\lambda$ failure spectrum on Cora (top) and the main comparison of
+training configurations across three citation networks (bottom). Accuracy is
+mean~$\pm$~std over seeds. Top: second-revision re-run at $n{=}10$ per weight
+with recorded similarities, which supersedes the pre-submission $n{=}5$ sweep.
+Bottom: $n{=}10$; the Cora fixed-$\lambda{=}20$ cell uses the second-revision
+batch, Citeseer and Pubmed use the original batch (identical protocol).
+$d_{\mathrm{best}}$ is the inter-head similarity at the best checkpoint.
+\label{tab:fixed-lambda}}
+{\begin{tabular}{lccc}
+\toprule
+\multicolumn{3}{c}{\textbf{Fixed-$\lambda$ sweep, Cora (attention-level)}} & \\
+\colrule
+$\lambda$ & Test acc.\ (\%) & $d_{\mathrm{best}}$ & \\
+\colrule
+0.01 & $81.16 \pm 1.63$ & 0.979 & \\
+0.1  & $81.03 \pm 1.50$ & 0.978 & \\
+0.5  & $81.13 \pm 1.37$ & 0.954 & \\
+1.0  & $81.08 \pm 1.68$ & 0.906 & \\
+5.0  & $80.50 \pm 1.44$ & 0.674 & \\
+20.0 & $79.71 \pm 1.24$ & 0.597 & \\
+50.0 & $78.22 \pm 1.88$ & 0.366 & \\
+\colrule
+\multicolumn{4}{c}{\textbf{Main comparison (10 seeds per cell)}} \\
+\colrule
+Dataset & Baseline & Fixed $\lambda{=}20$ & Adaptive ($t{=}0.7$, $\eta{=}0.05$) \\
+\colrule
+Cora     & $81.15 \pm 1.02$ & $79.71 \pm 1.24$ & $80.79 \pm 0.92$ \\
+Citeseer & $68.27 \pm 1.56$ & $66.55 \pm 2.00$ & $68.46 \pm 1.35$ \\
+Pubmed   & $77.52 \pm 0.54$ & $76.30 \pm 0.68$ & $77.44 \pm 0.67$ \\
+\botrule
+\end{tabular}}
+\end{table}

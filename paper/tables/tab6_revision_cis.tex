@@ -1,0 +1,43 @@
+% Table (number assigned by position): 95% CIs for the revision protocol
+% (R1/R2). Generated 2026-09-06 from results_clean.csv; matches
+% stats-appendix.md R1/R2.
+\begin{table}[th]
+\tbl{95\% confidence intervals for the revision protocol (10 seeds per cell). Top: adaptive-baseline comparison (R1); controller rows are the submitted dense adaptive block. Bottom: revival test (R2), test accuracy by checkpoint source and criterion; prune ratio 0.75, fine-tuning 100 epochs.
+\label{tab:revision-cis}}
+{\begin{tabular}{llcccc}
+\toprule
+\multicolumn{6}{c}{\textbf{R1: adaptive baselines}} \\
+\colrule
+Dataset & Schedule & Test acc.\ 95\% CI & $\lambda_{\mathrm{final}}$ & $d_{\mathrm{best}}$ & \\
+\colrule
+Cora & Controller & 80.79 $[80.13, 81.45]$ & 0.84 & 0.934 & \\
+ & Linear & 80.83 $[80.08, 81.58]$ & 0.87 & 0.924 & \\
+ & Kendall & 80.83 $[79.97, 81.69]$ & 1.37 & 0.849 & \\
+ & Gradnorm & 79.04 $[77.91, 80.17]$ & 1.95 & 0.693 & \\
+\colrule
+Citeseer & Controller & 68.46 $[67.49, 69.43]$ & 0.27 & 0.988 & \\
+ & Linear & 68.94 $[68.22, 69.66]$ & 0.30 & 0.976 & \\
+ & Kendall & 68.66 $[68.01, 69.31]$ & 1.10 & 0.969 & \\
+ & Gradnorm & 67.36 $[66.40, 68.32]$ & 1.95 & 0.688 & \\
+\colrule
+Pubmed & Controller & 77.44 $[76.96, 77.92]$ & 1.94 & 0.996 & \\
+ & Linear & 77.23 $[76.67, 77.79]$ & 1.67 & 0.995 & \\
+ & Kendall & 77.32 $[76.78, 77.86]$ & 1.26 & 0.996 & \\
+ & Gradnorm & 76.07 $[75.59, 76.55]$ & 1.95 & 1.000 & \\
+\colrule
+\multicolumn{6}{c}{\textbf{R2: revival test (test accuracy 95\% CIs)}} \\
+\colrule
+Dataset & Source & Diversity & Magnitude & Gradient & Random \\
+\colrule
+Cora & Best & 80.32 $[79.76, 80.88]$ & 80.31 $[79.89, 80.73]$ & 80.45 $[79.98, 80.92]$ & 80.27 $[79.73, 80.81]$ \\
+ & Late (min div.) & 80.36 $[79.30, 81.42]$ & 79.95 $[79.34, 80.56]$ & 79.88 $[79.16, 80.60]$ & 79.74 $[78.99, 80.49]$ \\
+ & Late (last) & 80.36 $[79.30, 81.42]$ & 79.95 $[79.34, 80.56]$ & 79.88 $[79.16, 80.60]$ & 79.74 $[78.99, 80.49]$ \\
+Citeseer & Best & 67.95 $[67.11, 68.79]$ & 67.94 $[67.13, 68.75]$ & 67.77 $[66.80, 68.74]$ & 68.35 $[67.60, 69.10]$ \\
+ & Late (min div.) & 66.05 $[65.08, 67.02]$ & 66.21 $[64.93, 67.49]$ & 66.65 $[65.46, 67.84]$ & 66.87 $[66.02, 67.72]$ \\
+ & Late (last) & 66.05 $[65.08, 67.02]$ & 66.18 $[64.85, 67.51]$ & 66.65 $[65.46, 67.84]$ & 66.87 $[66.02, 67.72]$ \\
+Pubmed & Best & 76.35 $[75.69, 77.01]$ & 76.33 $[75.60, 77.06]$ & 77.02 $[76.51, 77.53]$ & 76.77 $[75.69, 77.85]$ \\
+ & Late (min div.) & 76.17 $[75.27, 77.07]$ & 75.98 $[75.25, 76.71]$ & 76.51 $[75.97, 77.05]$ & 77.04 $[76.11, 77.97]$ \\
+ & Late (last) & 76.17 $[75.27, 77.07]$ & 75.98 $[75.25, 76.71]$ & 76.51 $[75.97, 77.05]$ & 77.04 $[76.11, 77.97]$ \\
+\botrule
+\end{tabular}}
+\end{table}

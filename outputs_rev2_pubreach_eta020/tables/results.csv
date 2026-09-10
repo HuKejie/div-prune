@@ -1,0 +1,10 @@
+dataset,seed,hidden_per_head,regularizer,lambda_fixed,lambda_target,lambda_eta,lambda_final,div_final,adaptive_lambda,lambda_schedule,prune_criterion,prune_ratio,pruned_acc_before_ft,checkpoint_source,criterion_div,distill,distill_alpha,distill_temperature,dense_test_acc,dense_lambda_final,dense_div_final,best_epoch,epochs_run,val_acc,test_acc,params,wall_time_s
+pubmed,0,8,attention,0.1,0.7,0.2,3.0,0.9845982789993286,False,controller,,,,,,False,,,,,,156.0,200.0,0.7979999780654907,0.7710000276565552,32393.0,259.3145833015442
+pubmed,1,8,attention,0.1,0.7,0.2,3.0,0.9987879991531372,False,controller,,,,,,False,,,,,,63.0,164.0,0.7940000295639038,0.7689999938011169,32393.0,212.14659762382507
+pubmed,2,8,attention,0.1,0.7,0.2,3.0,0.9888272881507874,False,controller,,,,,,False,,,,,,148.0,200.0,0.7919999957084656,0.7710000276565552,32393.0,254.48720383644104
+pubmed,3,8,attention,0.1,0.7,0.2,3.0,0.984675407409668,False,controller,,,,,,False,,,,,,180.0,200.0,0.800000011920929,0.7749999761581421,32393.0,250.60795640945435
+pubmed,4,8,attention,0.1,0.7,0.2,3.0,0.9888759255409241,False,controller,,,,,,False,,,,,,146.0,200.0,0.7919999957084656,0.7739999890327454,32393.0,157.30238723754883
+pubmed,5,8,attention,0.1,0.7,0.2,3.0,0.9952226281166077,False,controller,,,,,,False,,,,,,134.0,200.0,0.7979999780654907,0.7730000019073486,32393.0,151.6013708114624
+pubmed,6,8,attention,0.1,0.7,0.2,3.0,0.9984736442565918,False,controller,,,,,,False,,,,,,85.0,186.0,0.7900000214576721,0.7699999809265137,32393.0,143.49278903007507
+pubmed,7,8,attention,0.1,0.7,0.2,3.0,0.9979618787765503,False,controller,,,,,,False,,,,,,107.0,200.0,0.7960000038146973,0.7879999876022339,32393.0,147.98767256736755
+pubmed,8,8,attention,0.1,0.7,0.2,3.0,0.9956861734390259,False,controller,,,,,,False,,,,,,125.0,200.0,0.7879999876022339,0.7580000162124634,32393.0,137.10564851760864

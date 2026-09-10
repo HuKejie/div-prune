@@ -1,0 +1,14 @@
+# 3-layer encoder-decoder Transformer (8 heads, d=256, d_ff=512)
+name: transformer_mt
+d_model: 256
+num_heads: 8
+num_layers: 3
+d_ff: 512
+dropout: 0.1
+learning_rate: 0.001
+epochs: 50
+early_stop_patience: 10
+batch_size: 64
+vocab_size: 8000
+val_subset: 1014       # val sentences decoded per epoch (full val set: honest early-stopping
+                       # signal; corpus-BLEU on a small subset overstates degenerate models)

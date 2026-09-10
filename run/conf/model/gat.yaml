@@ -1,0 +1,10 @@
+# GAT: 2 layers, 8 heads, 8 hidden per head (92k params; M1 gate decision 2026-08-16)
+name: gat
+num_layers: 2
+num_heads: 8
+hidden_per_head: 8
+dropout: 0.6
+learning_rate: 0.005
+weight_decay: 0.0005
+epochs: 200
+early_stop_patience: 100

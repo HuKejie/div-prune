@@ -1,0 +1,43 @@
+# Experiment config: B0-B8 matrix maps to combinations of the fields below.
+# B0: regularizer=none,        prune=null,      distill=false
+# B1: regularizer=attention,   prune=null,      distill=false,  lambda_fixed=0.1
+# B6: regularizer=attention,   prune={criterion: diversity, ...}
+# B8: regularizer=attention,   prune={...},     distill=true,   adaptive_lambda=true
+#
+# M1 revision (2026-08-22): lambda_schedule adds the adaptive baselines
+# (linear / kendall / gradnorm) compared against the controller.
+name: gat_cora
+dataset: cora              # cora | citeseer | pubmed
+runs: 10                   # seeds per config (paper protocol)
+
+regularizer: none          # none | attention | output | both
+lambda_fixed: 0.1
+
+# --- lambda policy ---
+lambda_schedule: fixed     # fixed | controller | linear | kendall | gradnorm
+adaptive_lambda: false     # legacy alias; true forces lambda_schedule=controller
+lambda_target: 0.7         # diversity budget for the controller
+lambda_eta: 0.05           # controller gain
+lambda_max: 3.0            # controller clamp
+
+# linear schedule: calibrated on cora seed0 controller trace (slope ~0.0118/epoch,
+# lambda_max 3.0 -> ramp 254); the SAME schedule is transferred to citeseer/pubmed
+schedule_t0: 0
+schedule_ramp: 254
+schedule_lambda_max: 3.0
+gradnorm_eta: 0.16
+gradnorm_alpha: 0.0
+
+save_checkpoints: false    # write rolling best/mindiv/last checkpoints per run
+
+prune: null                # null | {criterion: diversity|gradient|random|magnitude,
+                           #        ratio: 0.25|0.5|0.75, finetune_epochs: 100,
+                           #        checkpoint_source: memory|best|late_min_div|late_last,
+                           #        reuse_stem: "cora_seed{seed}_schedcontroller" (skip
+                           #        dense training, load teacher checkpoint instead),
+                           #        teacher_dir: "outputs_ckpt/checkpoints" (dir where
+                           #        reuse_stem checkpoints live; default output_dir/checkpoints),
+                           #        extend_to_budget: false}
+distill: false             # dense teacher -> pruned student KD (B5/B8)
+distill_alpha: 0.5         # KD loss weight (1-alpha for the task loss)
+distill_temperature: 2.0

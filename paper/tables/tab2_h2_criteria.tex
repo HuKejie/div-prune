@@ -1,0 +1,26 @@
+% Table (number assigned by position): pruning-criterion contrasts (H2).
+% Regenerated 2026-09-06 from results_clean.csv. Adaptive-teacher ratio-0.75
+% rows use the B3 `best`-source runs (supersede the pre-merge rows dropped
+% in the 2026-09-05 merge; see stats-appendix.md H2 note).
+\begin{table}[th]
+\tbl{Paired comparison of pruning criteria at GAT scale (fine-tuning 100 epochs, no KD; identical seeds within each contrast). $\Delta$ is the accuracy difference (diversity criterion minus baseline criterion) in percentage points; Cohen's $d$ is reported for each contrast. Wilcoxon $p$-values are one-sided (diversity $>$ baseline). No contrast survives multiplicity control (Holm--Bonferroni across the 12 tests); the single nominally significant pair (B0 teacher, ratio 0.5, vs.\ gradient) rests on 5 pairs (these pre-submission cells use $n{=}5$ seeds per arm; the adaptive-teacher ratio-0.75 cells use the 10-seed revision batch) and is directionally inconsistent with the main comparison. Tied pairs in the Wilcoxon test fall back to the normal approximation; paired-$t$ $p$-values are reported alongside.
+\label{tab:criteria}}
+{\begin{tabular}{lllcccc}
+\toprule
+Teacher & Ratio & Contrast & $\Delta$ (pp) & Wilcoxon $p$ & Paired-$t$ $p$ & $d$ \\
+\colrule
+Adaptive & 0.5 & div vs.\ random & $-1.20$ & 1.0000 & 0.9828 & -1.41 \\
+Adaptive & 0.5 & div vs.\ gradient & $-0.22$ & 0.7812 & 0.6893 & -0.24 \\
+Adaptive & 0.5 & div vs.\ magnitude & $-0.26$ & 0.8125 & 0.7677 & -0.36 \\
+Adaptive & 0.75 & div vs.\ random & $+0.05$ & 0.2783 & 0.4466 & +0.04 \\
+Adaptive & 0.75 & div vs.\ gradient & $-0.13$ & 0.6289 & 0.7593 & -0.23 \\
+Adaptive & 0.75 & div vs.\ magnitude & $+0.01$ & 0.5391 & 0.4807 & +0.02 \\
+B0 & 0.5 & div vs.\ random & $-0.34$ & 0.7812 & 0.8067 & -0.43 \\
+B0 & 0.5 & div vs.\ gradient & $+0.62$ & 0.0938 & 0.0485 & +0.97 \\
+B0 & 0.5 & div vs.\ magnitude & $-0.20$ & 0.5938 & 0.6924 & -0.24 \\
+B0 & 0.75 & div vs.\ random & $-0.48$ & 0.9062 & 0.8254 & -0.47 \\
+B0 & 0.75 & div vs.\ gradient & $+0.04$ & 0.5000 & 0.4778 & +0.03 \\
+B0 & 0.75 & div vs.\ magnitude & $+0.12$ & 0.6875 & 0.4110 & +0.11 \\
+\botrule
+\end{tabular}}
+\end{table}

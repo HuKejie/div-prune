@@ -1,0 +1,31 @@
+% Table 7: controller sensitivity grid (eta x d*) on Cora, second revision.
+% Numbers: outputs_rev2 e4 batches (merged 2026-09-07) + the (eta=0.05, d*=0.7)
+% cell = submitted main controller arm (original batch). 2026-09-08: column
+% semantics corrected to best-checkpoint similarity (d_best), epochs added.
+\begin{table}[th]
+\tbl{Controller sensitivity to $(\eta, d^*)$ on Cora (10 seeds per cell;
+mean $\pm$ std). $d_{\mathrm{best}}$ is the mean inter-head similarity at the
+best checkpoint, ``Ep.'' the mean last epoch run under early stopping, and
+$\lambda_{\mathrm{final}}$ the mean final weight. The controller acts
+\emph{late} in training, so $d_{\mathrm{best}}$ responds only weakly to the
+grid; the budget is enforced after the best checkpoint (the main arm's
+late-training similarity is 0.706 on Cora, Table~\ref{tab:revival}). The
+$(0.05, 0.7)$ cell is the submitted main arm (original batch); the other
+eight cells are the second-revision grid batch (identical protocol).
+\label{tab:sens}}
+{\begin{tabular}{llcccc}
+\toprule
+$\eta$ & $d^*$ & Test acc.\ (\%) & $d_{\mathrm{best}}$ & Ep.\ & $\lambda_{\mathrm{final}}$ \\
+\colrule
+0.01 & 0.5 & $81.04 \pm 1.62$ & 0.966 & 150 & 0.29 \\
+0.01 & 0.7 & $80.98 \pm 1.45$ & 0.974 & 151 & 0.17 \\
+0.01 & 0.9 & $81.16 \pm 1.43$ & 0.978 & 150 & 0.05 \\
+0.05 & 0.5 & $80.94 \pm 1.50$ & 0.906 & 152 & 1.24 \\
+0.05 & 0.7 & $80.79 \pm 0.92$ & 0.934 & 160 & 0.84 \\
+0.05 & 0.9 & $81.04 \pm 1.62$ & 0.971 & 150 & 0.23 \\
+0.2  & 0.5 & $80.53 \pm 1.45$ & 0.853 & 149 & 2.78 \\
+0.2  & 0.7 & $80.72 \pm 1.53$ & 0.884 & 148 & 2.19 \\
+0.2  & 0.9 & $81.06 \pm 1.47$ & 0.949 & 146 & 0.53 \\
+\botrule
+\end{tabular}}
+\end{table}

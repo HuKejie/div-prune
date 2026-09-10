@@ -1,0 +1,15 @@
+name: multi30k
+dataset: multi30k
+runs: 5
+
+regularizer: none          # none | attention
+lambda_fixed: 0.1
+adaptive_lambda: false     # feedback-controlled lambda
+lambda_target: 0.7
+lambda_eta: 0.05
+lambda_max: 3.0
+
+distill: false
+distill_alpha: 0.5
+distill_temperature: 2.0
+prune: null

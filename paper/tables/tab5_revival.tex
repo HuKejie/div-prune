@@ -1,0 +1,39 @@
+% Table (number assigned by position): revival test (M2 revision, Colab
+% batches B2/B3). WS-IJPRAI table format. Numbers: stats-appendix.md R2
+% (2026-09-06). Prune ratio 0.75, controller teacher, FT 100 epochs, no KD,
+% 10 seeds per cell.
+\begin{table}[th]
+\tbl{Revival test: pruning criteria computed from late-training checkpoints. Top: test accuracy (mean~$\pm$~std) by checkpoint source and criterion. $d_{src}$ is the teacher's head similarity at the checkpoint source. The lowest-similarity checkpoint coincides with the final one in 119/120 (dataset, seed, criterion) combinations (similarity decreases monotonically), so $d_{src}$ for the late source is the teacher's final similarity. Bottom: one-sided paired contrasts (diversity vs.\ baseline criterion) at the late source, the timing where the signal is actually differentiated; none is significant, and the nominally largest effect favors random. The negative criterion result therefore survives the revival test.
+\label{tab:revival}}
+{\begin{tabular}{llcccccc}
+\toprule
+Dataset & Source & $d_{src}$ & & Diversity & Magnitude & Gradient & Random \\
+\colrule
+Cora & Best & 0.934 & & $80.32 \pm 0.78$ & $80.31 \pm 0.59$ & $80.45 \pm 0.66$ & $80.27 \pm 0.75$ \\
+ & Late (min div.) & 0.706 & & $80.36 \pm 1.49$ & $79.95 \pm 0.86$ & $79.88 \pm 1.01$ & $79.74 \pm 1.05$ \\
+ & Late (last) & 0.706 & & $80.36 \pm 1.49$ & $79.95 \pm 0.86$ & $79.88 \pm 1.01$ & $79.74 \pm 1.05$ \\
+\colrule
+Citeseer & Best & 0.972 & & $67.95 \pm 1.17$ & $67.94 \pm 1.13$ & $67.77 \pm 1.36$ & $68.35 \pm 1.05$ \\
+ & Late (min div.) & 0.847 & & $66.05 \pm 1.35$ & $66.21 \pm 1.80$ & $66.65 \pm 1.67$ & $66.87 \pm 1.19$ \\
+ & Late (last) & 0.847 & & $66.05 \pm 1.35$ & $66.18 \pm 1.86$ & $66.65 \pm 1.67$ & $66.87 \pm 1.19$ \\
+\colrule
+Pubmed & Best & 0.995 & & $76.35 \pm 0.93$ & $76.33 \pm 1.02$ & $77.02 \pm 0.72$ & $76.77 \pm 1.51$ \\
+ & Late (min div.) & 0.988 & & $76.17 \pm 1.25$ & $75.98 \pm 1.03$ & $76.51 \pm 0.76$ & $77.04 \pm 1.31$ \\
+ & Late (last) & 0.988 & & $76.17 \pm 1.25$ & $75.98 \pm 1.03$ & $76.51 \pm 0.76$ & $77.04 \pm 1.31$ \\
+\colrule
+\multicolumn{8}{l}{\textbf{Paired contrasts at the late source (diversity minus baseline, 10 pairs)}} \\
+\colrule
+Dataset & Contrast & $\Delta$ (pp) & & Wilcoxon $p$ & Paired-$t$ $p$ & $d$ & \\
+\colrule
+Cora & vs.\ random & $+0.62$ & & 0.1162 & 0.1153 & 0.41 & \\
+Cora & vs.\ magnitude & $+0.41$ & & 0.0781 & 0.0779 & 0.49 & \\
+Cora & vs.\ gradient & $+0.48$ & & 0.1436 & 0.1223 & 0.39 & \\
+Citeseer & vs.\ random & $-0.82$ & & 0.9502 & 0.9475 & -0.57 & \\
+Citeseer & vs.\ magnitude & $-0.16$ & & 0.6289 & 0.6122 & -0.09 & \\
+Citeseer & vs.\ gradient & $-0.60$ & & 0.8691 & 0.8296 & -0.32 & \\
+Pubmed & vs.\ random & $-0.87$ & & 0.9756 & 0.9589 & -0.62 & \\
+Pubmed & vs.\ magnitude & $+0.19$ & & 0.2656 & 0.1509 & 0.35 & \\
+Pubmed & vs.\ gradient & $-0.34$ & & 0.8203 & 0.8391 & -0.33 & \\
+\botrule
+\end{tabular}}
+\end{table}

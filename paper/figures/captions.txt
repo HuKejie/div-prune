@@ -1,0 +1,37 @@
+Fig. 1 — Test accuracy of a 2-layer GAT on three citation networks under baseline
+training, fixed-lambda (lambda=20) diversity regularization, and feedback-controlled
+adaptive regularization (target 0.7, eta=0.05). Bars are means over 10 seeds; error
+bars are +/-1 standard deviation over seeds; values above bars are means. The
+adaptive configuration stays within +/-0.4 points of baseline on all three datasets;
+no fixed weight achieves both an effect on similarity and this level of accuracy
+(see Table 1).
+Fig. 2a (Cora, seed 3) — Adaptive-controller dynamics on Cora, seed
+3 (same-protocol run; see Section 5 for the provenance note): (a) head
+similarity d_t falls toward the 0.7 budget as (b) the integral controller raises
+lambda; (c) validation accuracy remains flat once the budget is enforced late in
+training, after the best checkpoint is selected.
+
+Fig. 2b (Citeseer, seed 0) — Adaptive-controller dynamics on Citeseer, seed
+0 (same-protocol run; see Section 5 for the provenance note): (a) head
+similarity d_t falls toward the 0.7 budget as (b) the integral controller raises
+lambda; (c) validation accuracy remains flat once the budget is enforced late in
+training, after the best checkpoint is selected.
+
+Fig. 3 — Test accuracy at fixed head budgets: training a smaller student from
+scratch with KD (B5), diversity-based pruning followed by fine-tuning (B6), and
+pruning followed by KD (B8), at prune ratios 0.5 (4/8 heads) and 0.75 (2/8 heads).
+Bars are means over 10 seeds; error bars are +/-1 standard deviation. Brackets:
+one-sided paired Wilcoxon signed-rank test, B8 vs. B6, p=0.0010 at both ratios.
+B8 vs. B5: no significant difference (two-sided Wilcoxon p=0.0020 at ratio
+0.5, p=0.0020 at ratio 0.75; 95% CIs on the difference are in the text); KD,
+not the pruning path, accounts for the recovery.
+
+Fig. 4 - Controller vs. adaptive baselines (M1 revision). Test accuracy of a 2-layer
+GAT under feedback-controlled regularization and three adaptive-baseline schedules
+(linear, Kendall-style, GradNorm). Bars are means over 10 seeds; error bars are
++/-1 standard deviation. Brackets: one-sided paired Wilcoxon signed-rank test,
+controller vs. GradNorm; p=0.0098 (Cora) and p=0.0049 (Pubmed); Citeseer is
+p=0.0527. Linear and Kendall schedules match the controller on accuracy but do not
+enforce the similarity budget; GradNorm enforces it already at the best checkpoint
+and pays 1.1-1.8 points. Only the controller enforces the budget late in training
+without accuracy loss (adaptive-baselines table).

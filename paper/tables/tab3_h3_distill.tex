@@ -1,0 +1,19 @@
+% Table 3: KD study (H3). WS-IJPRAI table format.
+% Numbers: stats-appendix.md H3 (2026-08-20).
+% prune ratio = fraction of heads pruned (ratio 0.5 -> 4/8 kept; 0.75 -> 2/8 kept).
+\begin{table}[th]
+\tbl{Knowledge distillation at fixed head budgets (Cora; mean $\pm$ std over
+10 seeds; teacher = adaptive dense model). B5: small student trained from
+scratch with KD. B6: diversity-based pruning + fine-tuning (100 epochs).
+B8: pruning + KD (100 epochs). Contrasts are paired Wilcoxon signed-rank tests
+over identical seeds; Cohen's $d$ in parentheses. B8 vs.\ B5 is statistically
+tied at both budgets. \label{tab:distill}}
+{\begin{tabular}{lccccc}
+\toprule
+Ratio & B5 (pure KD) & B6 (prune+FT) & B8 (prune+KD) & B8 $-$ B6 & B8 $-$ B5 \\
+\colrule
+0.5  & $82.48 \pm 1.08$ & $79.89 \pm 0.64$ & $82.00 \pm 0.69$ & $+2.11$ ($p{=}0.001$, $d{=}2.06$) & $-0.48$ ($p{=}0.92$, $d{=}-0.53$) \\
+0.75 & $82.88 \pm 1.16$ & $79.66 \pm 1.56$ & $82.04 \pm 1.46$ & $+2.38$ ($p{=}0.001$, $d{=}2.07$) & $-0.84$ ($p{=}0.95$, $d{=}-0.63$) \\
+\botrule
+\end{tabular}}
+\end{table}
