@@ -104,7 +104,8 @@
       ijprai-submission-20260910.zip uploaded to the journal system)
 - [x] Author info filled (2026-09-10, commit 343c273): Kejie Hu,
       City University of Wu Han, xshu1999@gmail.com (from the KSEM paper's
-      author block). Co-authors (Fang Liu, Bing Zhou) pending user decision.
+      author block). Solo authorship confirmed by user (2026-09-10:
+      Fang Liu is not their advisor; the work is independent).
       zip rebuilt — RE-UPLOAD to the journal system if the uploaded copy
       still has the placeholder author block.
 - [ ] Await journal decision (watch submission system / email; on a new
