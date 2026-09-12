@@ -100,7 +100,7 @@ def _bar_hatch(fig, ax, x, means, stds, width, label, color, hatch,
         if np.isfinite(m):
             y = m + s + label_dy
             ax.text(bar.get_x() + bar.get_width() / 2, y,
-                    f"{m:.1f}", ha="center", va="bottom", fontsize=7, color=INK)
+                    f"{m:.1f}", ha="center", va="bottom", fontsize=8, color=INK)
             label_tops.append(y)
     return label_tops
 
@@ -128,6 +128,7 @@ def fig1_h1(rows: list[dict]) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(["Cora", "Citeseer", "Pubmed"])
     ax.set_ylabel("Test accuracy (%)")
+    ax.tick_params(labelsize=9)
     ax.set_ylim(0, 90)
     ax.legend(frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, 1.13))
     fig.tight_layout()
@@ -147,6 +148,7 @@ def fig2_trace(dataset: str = "cora", seed: int = 3) -> None:
     fig, axes = plt.subplots(1, 3, figsize=(9.5, 2.9))
     for ax, letter in zip(axes, "abc"):
         ax.set_title(f"({letter})", loc="left", fontsize=9)
+        ax.tick_params(labelsize=9)
 
     axes[0].plot(epochs, div, color=BLUE, linewidth=1.6)
     axes[0].axhline(0.7, color=MUTED, linestyle="--", linewidth=1)
@@ -230,7 +232,7 @@ def fig3_h3(rows: list[dict]) -> None:
     # alternative="greater" with B8 as the first argument.
     # Keep the bracket clear of the tallest value label (labels sit up to
     # label_dy above m+std; a fixed 1.8 gap collided with tall bars).
-    y_annot = max(label_tops) + 4.5
+    y_annot = max(label_tops) + 6.5
     p_b8b6: dict[str, float] = {}
     p_b8b5: dict[str, float] = {}
     for j, ratio in enumerate(ratios):
@@ -244,7 +246,7 @@ def fig3_h3(rows: list[dict]) -> None:
             if p < 0.05:
                 ax.annotate("", xy=(x[j] + 0.26, y_annot), xytext=(x[j], y_annot),
                             arrowprops=dict(arrowstyle="-", color=INK))
-                ax.text(x[j] + 0.13, y_annot + 1.2, f"$p={p:.4f}$",
+                ax.text(x[j] + 0.13, y_annot + 1.2, f"$p={p:.3f}$",
                         ha="center", va="bottom", fontsize=8, color=INK)
         b5 = _pairs(_b5, ratio)
         seeds5 = sorted(set(b5) & set(b8))
@@ -303,7 +305,7 @@ def fig4_baselines(rows: list[dict]) -> None:
 
     # Significance brackets: controller vs GradNorm (one-sided paired Wilcoxon).
     # Keep the bracket clear of the tallest value label (see fig3_h3).
-    y_annot = max(label_tops) + 4.5
+    y_annot = max(label_tops) + 6.5
     ctrl_sel = lambda d, ds: _controller(d, ds)
     gn_sel = lambda d, ds: _b1_sched(d, ds, "gradnorm")
     for j, ds in enumerate(datasets):

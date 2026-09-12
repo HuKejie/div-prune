@@ -23,7 +23,7 @@ pruning followed by KD (B8), at prune ratios 0.5 (4/8 heads) and 0.75 (2/8 heads
 Bars are means over 10 seeds; error bars are +/-1 standard deviation. Brackets:
 one-sided paired Wilcoxon signed-rank test, B8 vs. B6, p=0.0010 at both ratios.
 B8 vs. B5: no significant difference (two-sided Wilcoxon p=0.1934 at ratio
-0.5, p=0.1348 at ratio 0.75; 95% CIs on the difference are in the text); KD,
+0.5, p=0.1309 at ratio 0.75; 95% CIs on the difference are in the text); KD,
 not the pruning path, accounts for the recovery.
 
 Fig. 4 - Controller vs. adaptive baselines (M1 revision). Test accuracy of a 2-layer
