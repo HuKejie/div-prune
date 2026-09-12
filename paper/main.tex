@@ -691,12 +691,13 @@ dominates criterion choice at this scale.
 % ---------------------------------------------------------------------------
 \appendix
 
+\clearpage
 \section{95\% confidence intervals}
 
-\begin{table}[th]
+\begin{table}[ht]
 \tbl{Main-comparison cells with 95\% confidence intervals (10 seeds).
 \label{tab:ci}}
-{\begin{tabular}{lccc}
+{\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \toprule
 Dataset & Baseline & Fixed $\lambda{=}20$ & Adaptive \\
 \colrule
@@ -704,16 +705,18 @@ Cora & $[80.42, 81.88]$ & $[78.82, 80.60]$ & $[80.13, 81.45]$ \\
 Citeseer & $[67.15, 69.39]$ & $[65.12, 67.98]$ & $[67.49, 69.43]$ \\
 Pubmed & $[77.13, 77.91]$ & $[75.81, 76.79]$ & $[76.96, 77.92]$ \\
 \botrule
-\end{tabular}}
+\end{tabular*}}
 \end{table}
 
 \input{tables/tab6_revision_cis}
 
+\clearpage
 \section{Controller sensitivity to $\eta$ and $d^*$}
 \label{app:sens}
 
 \input{tables/tab7_sensitivity}
 
+\clearpage
 \section{H3 extension to Citeseer and Pubmed}
 \label{app:h3ext}
 

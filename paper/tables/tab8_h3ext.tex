@@ -4,7 +4,7 @@
 % 10 seeds per cell; B4 = schedule-fixed no-criterion rows, B5 = no-criterion
 % distill rows, B6/B8 = archived adaptive-controller `best`-source rows (B2/B3).
 % Paired statistics (computed 2026-09-08) are given in the Appendix C text.
-\begin{table}[th]
+\begin{table}[ht]
 \tbl{The four KD-pipeline arms at matched head budgets on Citeseer and
 Pubmed (10 seeds; mean $\pm$ std). B4: from-scratch small model, no KD. B5:
 pure KD from scratch. B6: prune + fine-tuning. B8: prune + KD. Cora cells
@@ -12,7 +12,7 @@ repeat the submitted H3 comparison (Table~\ref{tab:distill}); paired
 statistics for the Citeseer/Pubmed cells are reported in the Appendix~C
 text.
 \label{tab:h3ext}}
-{\begin{tabular}{llcccc}
+{\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llcccc}
 \toprule
 Dataset & Ratio & B4 (scratch) & B5 (pure KD) & B6 (prune+FT) & B8 (prune+KD) \\
 \colrule
@@ -25,5 +25,5 @@ Citeseer & 0.75 & $67.30 \pm 1.53$ & $69.99 \pm 1.07$ & $67.95 \pm 1.17$ & $69.2
 Pubmed & 0.5  & $76.95 \pm 0.74$ & $78.25 \pm 0.52$ & $77.19 \pm 0.86$ & $77.96 \pm 0.72$ \\
 Pubmed & 0.75 & $74.99 \pm 0.92$ & $77.33 \pm 0.31$ & $76.35 \pm 0.93$ & $77.95 \pm 0.38$ \\
 \botrule
-\end{tabular}}
+\end{tabular*}}
 \end{table}

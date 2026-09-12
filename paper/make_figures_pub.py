@@ -24,6 +24,10 @@ from scipy import stats
 
 ROOT = Path(__file__).resolve().parents[1]
 CSV = ROOT / "outputs" / "tables" / "results_clean.csv"
+# Submitted-batch archive: B6 ratio-0.75 Cora rows live here (the merged
+# results_clean.csv carries a different batch for those cells; Table 3 uses
+# the submitted batch, so the figure must match it).
+CSV_PREMERGE = ROOT / "outputs" / "tables" / "results_clean_premerge_20260820.csv"
 TRACES = ROOT / "outputs" / "traces"
 FIGDIR = ROOT / "paper" / "figures"
 
@@ -165,21 +169,36 @@ def fig2_trace(dataset: str = "cora", seed: int = 3) -> None:
 
 
 def _b5(rows, ratio):
+    # Fig. 3 is the Cora comparison (Table 3); cite dataset explicitly so
+    # Citeseer/Pubmed rows cannot leak into the bars.
     return [r for r in rows if r["prune_criterion"] == "" and r["distill"] == "True"
-            and r["prune_ratio"] == ratio and float(r["epochs_run"]) <= 100.5]
+            and r["prune_ratio"] == ratio and float(r["epochs_run"]) <= 100.5
+            and r["dataset"] == "cora"]
 
 
 def _b6(rows, ratio):
-    return [r for r in rows if r["prune_criterion"] == "diversity"
-            and r["distill"] == "False" and r["prune_ratio"] == ratio
-            and r["regularizer"] == "attention" and r["adaptive_lambda"] == "True"
+    sel = [r for r in rows if r["prune_criterion"] == "diversity"
+           and r["distill"] == "False" and r["prune_ratio"] == ratio]
+    if ratio == "0.75":
+        # The merged CSV's B6 0.75 Cora rows are a later batch; Table 3's
+        # numbers come from the submitted batch archived in CSV_PREMERGE.
+        pre = list(csv.DictReader(CSV_PREMERGE.open(encoding="utf-8")))
+        pre_cora = [r for r in pre if r["dataset"] == "cora"
+                    and r["prune_criterion"] == "diversity"
+                    and r["distill"] == "False" and r["prune_ratio"] == "0.75"
+                    and r["regularizer"] == "attention"]
+        if pre_cora:
+            sel = [r for r in sel if r["dataset"] != "cora"] + pre_cora
+    return [r for r in sel
+            if r["regularizer"] == "attention" and r["adaptive_lambda"] == "True"
             and float(r["epochs_run"]) == 100.0]
 
 
 def _b8(rows, ratio):
     return [r for r in rows if r["prune_criterion"] == "diversity"
             and r["distill"] == "True" and r["prune_ratio"] == ratio
-            and r["regularizer"] == "attention" and r["adaptive_lambda"] == "True"]
+            and r["regularizer"] == "attention" and r["adaptive_lambda"] == "True"
+            and r["dataset"] == "cora"]
 
 
 def fig3_h3(rows: list[dict]) -> None:
@@ -209,7 +228,9 @@ def fig3_h3(rows: list[dict]) -> None:
 
     # Paired Wilcoxon, appendix convention (final_stats.py): one-sided
     # alternative="greater" with B8 as the first argument.
-    y_annot = max(label_tops) + 1.8
+    # Keep the bracket clear of the tallest value label (labels sit up to
+    # label_dy above m+std; a fixed 1.8 gap collided with tall bars).
+    y_annot = max(label_tops) + 4.5
     p_b8b6: dict[str, float] = {}
     p_b8b5: dict[str, float] = {}
     for j, ratio in enumerate(ratios):
@@ -223,8 +244,8 @@ def fig3_h3(rows: list[dict]) -> None:
             if p < 0.05:
                 ax.annotate("", xy=(x[j] + 0.26, y_annot), xytext=(x[j], y_annot),
                             arrowprops=dict(arrowstyle="-", color=INK))
-                ax.text(x[j] + 0.13, y_annot + 0.3, f"$p={p:.4f}$",
-                        ha="center", fontsize=8, color=INK)
+                ax.text(x[j] + 0.13, y_annot + 1.2, f"$p={p:.4f}$",
+                        ha="center", va="bottom", fontsize=8, color=INK)
         b5 = _pairs(_b5, ratio)
         seeds5 = sorted(set(b5) & set(b8))
         if len(seeds5) >= 2:
@@ -281,7 +302,8 @@ def fig4_baselines(rows: list[dict]) -> None:
                 for r in sel(dense, ds) if r["test_acc"] not in ("", "nan")}
 
     # Significance brackets: controller vs GradNorm (one-sided paired Wilcoxon).
-    y_annot = max(label_tops) + 1.8
+    # Keep the bracket clear of the tallest value label (see fig3_h3).
+    y_annot = max(label_tops) + 4.5
     ctrl_sel = lambda d, ds: _controller(d, ds)
     gn_sel = lambda d, ds: _b1_sched(d, ds, "gradnorm")
     for j, ds in enumerate(datasets):
@@ -293,7 +315,8 @@ def fig4_baselines(rows: list[dict]) -> None:
         if p < 0.05:
             ax.annotate("", xy=(x[j] + 0.3, y_annot), xytext=(x[j] - 0.3, y_annot),
                         arrowprops=dict(arrowstyle="-", color=INK))
-            ax.text(x[j], y_annot + 0.3, f"$p={p:.4f}$", ha="center", fontsize=8, color=INK)
+            ax.text(x[j], y_annot + 1.2, f"$p={p:.4f}$", ha="center",
+                    va="bottom", fontsize=8, color=INK)
     ax.set_xticks(x)
     ax.set_xticklabels(["Cora", "Citeseer", "Pubmed"])
     ax.set_ylabel("Test accuracy (%)")

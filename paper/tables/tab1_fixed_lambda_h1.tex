@@ -10,19 +10,19 @@ Bottom: $n{=}10$; the Cora fixed-$\lambda{=}20$ cell uses the second-revision
 batch, Citeseer and Pubmed use the original batch (identical protocol).
 $d_{\mathrm{best}}$ is the inter-head similarity at the best checkpoint.
 \label{tab:fixed-lambda}}
-{\begin{tabular}{lccc}
+{\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \toprule
-\multicolumn{3}{c}{\textbf{Fixed-$\lambda$ sweep, Cora (attention-level)}} & \\
+\multicolumn{4}{c}{\textbf{Fixed-$\lambda$ sweep, Cora (attention-level)}} \\
 \colrule
-$\lambda$ & Test acc.\ (\%) & $d_{\mathrm{best}}$ & \\
+\multicolumn{2}{c}{$\lambda$} & Test acc.\ (\%) & $d_{\mathrm{best}}$ \\
 \colrule
-0.01 & $81.16 \pm 1.63$ & 0.979 & \\
-0.1  & $81.03 \pm 1.50$ & 0.978 & \\
-0.5  & $81.13 \pm 1.37$ & 0.954 & \\
-1.0  & $81.08 \pm 1.68$ & 0.906 & \\
-5.0  & $80.50 \pm 1.44$ & 0.674 & \\
-20.0 & $79.71 \pm 1.24$ & 0.597 & \\
-50.0 & $78.22 \pm 1.88$ & 0.366 & \\
+\multicolumn{2}{c}{0.01} & $81.16 \pm 1.63$ & 0.979 \\
+\multicolumn{2}{c}{0.1}  & $81.03 \pm 1.50$ & 0.978 \\
+\multicolumn{2}{c}{0.5}  & $81.13 \pm 1.37$ & 0.954 \\
+\multicolumn{2}{c}{1.0}  & $81.08 \pm 1.68$ & 0.906 \\
+\multicolumn{2}{c}{5.0}  & $80.50 \pm 1.44$ & 0.674 \\
+\multicolumn{2}{c}{20.0} & $79.71 \pm 1.24$ & 0.597 \\
+\multicolumn{2}{c}{50.0} & $78.22 \pm 1.88$ & 0.366 \\
 \colrule
 \multicolumn{4}{c}{\textbf{Main comparison (10 seeds per cell)}} \\
 \colrule
@@ -32,5 +32,5 @@ Cora     & $81.15 \pm 1.02$ & $79.71 \pm 1.24$ & $80.79 \pm 0.92$ \\
 Citeseer & $68.27 \pm 1.56$ & $66.55 \pm 2.00$ & $68.46 \pm 1.35$ \\
 Pubmed   & $77.52 \pm 0.54$ & $76.30 \pm 0.68$ & $77.44 \pm 0.67$ \\
 \botrule
-\end{tabular}}
+\end{tabular*}}
 \end{table}

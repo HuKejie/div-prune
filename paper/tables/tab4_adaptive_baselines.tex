@@ -5,7 +5,7 @@
 \begin{table}[th]
 \tbl{Controller vs.\ adaptive baselines (one-sided paired tests, 10 seeds). Accuracy is mean~$\pm$~std per cell; $\lambda_{\mathrm{final}}$ and $d_{\mathrm{best}}$ are the mean final controller weight and the inter-head similarity at the best checkpoint. GradNorm is the only baseline whose best-checkpoint similarity reaches the budget, at a significant accuracy cost; linear and Kendall schedules stay accuracy-neutral and do not enforce the budget at the best checkpoint. The controller enforces the budget late in training while matching baseline accuracy (late-phase similarity was not logged for the three baselines).
 \label{tab:adaptive-baselines}}
-{\begin{tabular}{llccccc}
+{\setlength{\tabcolsep}{3pt}\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
 \toprule
 Dataset & Schedule & Test acc.\ (\%) & $\lambda_{\mathrm{final}}$ & $d_{\mathrm{best}}$ & $\Delta$ vs.\ ctrl.\ (pp) & $p$ (paired) \\
 \colrule
@@ -25,5 +25,5 @@ Pubmed & Controller & $77.44 \pm 0.67$ & 1.94 & 0.996 & --- & --- \\
  & Gradnorm & $76.07 \pm 0.67$ & 1.95 & 1.000 & $+1.37$ & 0.0049 \\
 \colrule
 \botrule
-\end{tabular}}
+\end{tabular*}}
 \end{table}
