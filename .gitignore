@@ -40,6 +40,7 @@ ijprai-submission-*.zip
 # Internal review artifacts (not part of the public release)
 paper/reviewer-simulation-*.md
 paper/self-review-*.md
+paper/rejection-response-*.md
 paper/draft-*.md
 
 # LaTeX build artifacts
