@@ -20,7 +20,7 @@ FILES = [
     "tables/tab7_sensitivity.tex",
     "tables/tab8_h3ext.tex",
 ]
-OUT = ROOT / "ijprai-submission-20260912.zip"
+OUT = ROOT / "ijprai-submission-20260914.zip"
 with zipfile.ZipFile(OUT, "w", zipfile.ZIP_DEFLATED) as z:
     for f in FILES:
         z.write(P / f, f)
