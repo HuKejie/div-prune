@@ -115,6 +115,28 @@
       error-bar caps and significance brackets re-anchored above the labels
       (make_figures_pub.py _bar_hatch now returns label tops, per-figure
       label_dy); recompiled 19 pages + zip rebuilt
+- [x] Layout overhaul (2026-09-12, commit ffee169): all tables full text
+      width; KD-table statistics and revision-CI cells stacked to stay inside
+      the 30pc text block; appendices anchored with \clearpage so titles are
+      never orphaned; Fig. 3/4 cleared of value labels overlapping the
+      significance brackets; Fig. 4 now plots all three B5/B6/B8 bars at both
+      ratios and matches Table 3 exactly. 20 pages.
+- [x] Final pre-submission review (2026-09-12, commit b67e596): p-values
+      harmonized across tables and text; abstract trimmed to 188 words;
+      figure annotation gaps cleared; Fig. 1/3/4 and Fig. 2 (Cora, Citeseer)
+      regenerated via make_figures_pub.py; tab3/tab4/tab6 refreshed to match;
+      build_zip.py gained a file-manifest check.
+- [x] Received date corrected to the actual submission day (2026-09-12,
+      commit 2008d08): \received{12 September 2026}.
+- [x] Redundant "Appendix" prefix dropped from cross-references (2026-09-12,
+      commit ba6c204): the ws-ijprai class already expands \ref to
+      "Appendix C".
+- [x] Affiliation corrected to Wuhan City College (2026-09-14 / committed
+      2026-10-26, 1c9af1a): "City University of Wu Han" was a mistranslation;
+      main.pdf recompiled (20 pages) and ijprai-submission-20260914.zip
+      rebuilt — the zip already carries the corrected address.
+- [x] Synced to GitHub (2026-10-26): 6 commits 57ace85..3e4ca8f pushed to
+      origin/main; .gitignore now excludes the render_final*/ page previews.
 - [ ] Upload to the journal system (user action)
 - [ ] Await journal decision (watch submission system / email; on a new
       review round, route to review-response)

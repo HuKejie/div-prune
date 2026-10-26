@@ -3,7 +3,7 @@
 Manuscript: `main.tex` — **official `ws-ijprai` class applied (2026-08-22)**,
 converted from `draft-v2-full.md`.
 
-## Files to upload (Overleaf recommended) — revised 2026-09-10
+## Files to upload (Overleaf recommended) — revised 2026-09-14
 
 | File | Role |
 |---|---|
@@ -24,9 +24,11 @@ converted from `draft-v2-full.md`.
 | `tables/tab7_sensitivity.tex` | Table 7: controller sensitivity grid (η×d*, d_best semantics) |
 | `tables/tab8_h3ext.tex` | Table 8: H3 extension to Citeseer/Pubmed |
 
-The zip `ijprai-submission-20260912.zip` (repo root) contains exactly these
+The zip `ijprai-submission-20260914.zip` (repo root) contains exactly these
 files (2026-09-12 layout overhaul: full-width tables, uncluttered Fig. 3/4,
-ordered appendices). `fig2_trace_citeseer_seed0.pdf` was removed in the revision (no longer
+ordered appendices; 2026-09-14: affiliation corrected to Wuhan City College,
+main.pdf recompiled). Regenerate with `python build_zip.py` from the repo root.
+`fig2_trace_citeseer_seed0.pdf` was removed in the revision (no longer
 referenced). The code repository is public at
 https://github.com/HuKejie/div-prune (cited in the manuscript, contributions
 and limitations).
@@ -42,7 +44,7 @@ drafts, `*.py` utilities, PNG previews.
 - [x] Funding: none — Acknowledgments section removed (2026-09-10)
 - [x] History block: `\received{(10 September 2026)}` only; the journal
       fills the rest (2026-09-10)
-- [x] Local compile verified (2026-09-12, TeXLive 2026 at
+- [x] Local compile verified (2026-09-14, TeXLive 2026 at
       `C:\Users\hukej\texlive\2026\bin\windows`: pdflatex + bibtex + 2×pdflatex,
       0 errors, 0 overfull, 20 pages)
 - [x] Final verification pass (2026-09-12: all 8 polish items + self-review
