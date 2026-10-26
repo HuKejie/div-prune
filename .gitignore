@@ -47,7 +47,11 @@ paper/*.aux
 paper/*.bbl
 paper/*.blg
 paper/*.out
-paper/pass3.log
+paper/pass*.log
+
+# Page-by-page render previews used for visual checks
+paper/render_final/
+paper/render_final2/
 
 # OS
 Thumbs.db
