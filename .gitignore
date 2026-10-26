@@ -31,6 +31,13 @@ data/
 /outputs_rev2_*/tables/*
 !/outputs_rev2_*/tables/results.csv
 
+# Frontier batch (2026-10-26): keep the merged evidence CSV, drop traces/ckpts
+/outputs_frontier/*
+!/outputs_frontier/tables/
+/outputs_frontier/tables/*
+!/outputs_frontier/tables/results.csv
+/outputs_smoke2/
+
 # Submission zips (paper sources live in paper/)
 ijprai-submission-*.zip
 
