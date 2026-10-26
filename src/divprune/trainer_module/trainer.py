@@ -173,12 +173,21 @@ def train_model(
     div_best = float("nan")
     min_div_val = float("inf")
     trace_rows: List[Tuple[int, float, float, float]] = []
+    last_div_t = float("nan")
+    last_lam = schedule.lambda_value()
     patience_left = int(cfg.model.early_stop_patience)
     start = time.time()
 
+    # Measure inter-head similarity every epoch. Enabled for unregularized runs
+    # too: the similarity-accuracy frontier needs the baseline point, and the
+    # late-phase comparison is only fair if every policy logs the same quantity.
+    # Set experiment.measure_div=false to skip the extra forward pass.
+    measure_div = bool(cfg.experiment.get("measure_div", True))
+    can_measure = hasattr(model, "attention_weights")
+
     for epoch in range(int(cfg.model.epochs)):
         model.train()
-        if use_reg:
+        if (use_reg or measure_div) and can_measure:
             # Deterministic controller input: dropout-masked coefficients would
             # bias the similarity estimate (~0.4x) and distort the feedback signal.
             with torch.no_grad():
@@ -187,6 +196,7 @@ def train_model(
                 model.train()
         else:
             div_t = float("nan")
+        last_div_t = div_t
 
         schedule.update(
             ScheduleContext(
@@ -199,6 +209,7 @@ def train_model(
             )
         )
         lam = schedule.lambda_value()
+        last_lam = lam
 
         optimizer.zero_grad()
         loss = _task_loss()
@@ -208,8 +219,9 @@ def train_model(
         optimizer.step()
 
         val_acc = evaluate(model, data, data.val_mask, device)
-        if not isinstance(schedule, FixedSchedule):
-            trace_rows.append((epoch, div_t, lam, val_acc))
+        # Log every policy, fixed included: late-phase similarity is the quantity
+        # the frontier analysis compares, and it was previously controller-only.
+        trace_rows.append((epoch, div_t, lam, val_acc))
 
         if use_reg and div_t < min_div_val:
             min_div_val = div_t
@@ -254,5 +266,10 @@ def train_model(
         "params": float(sum(p.numel() for p in model.parameters())),
         "wall_time_s": time.time() - start,
         "lambda_final": lam_best,
+        # Similarity at the best-val checkpoint (kept under the historical name
+        # so downstream analysis scripts keep working).
         "div_final": div_best,
+        # Similarity and weight at the final epoch: the "late phase" quantity.
+        "div_last": last_div_t,
+        "lambda_last": last_lam,
     }

@@ -27,6 +27,9 @@ logger = logging.getLogger(__name__)
 RESULT_HEADERS = [
     "dataset", "seed", "hidden_per_head", "regularizer", "lambda_fixed",
     "lambda_target", "lambda_eta", "lambda_final", "div_final", "adaptive_lambda",
+    # div_final is similarity at the best-val checkpoint; div_last/lambda_last
+    # are the final-epoch ("late phase") values, logged for every policy.
+    "div_last", "lambda_last",
     "lambda_schedule", "prune_criterion", "prune_ratio", "pruned_acc_before_ft",
     "checkpoint_source", "criterion_div", "distill",
     "distill_alpha", "distill_temperature",
@@ -99,14 +102,19 @@ def main(cfg: DictConfig) -> None:
         set_seed(seed)
         model = ModelFactory(cfg.model.name)(model_cfg)
         trace_path = None
-        if sched != "fixed":
-            if sched == "controller":
-                trace_path = trace_dir / (
-                    f"{cfg.experiment.dataset}_seed{seed}_t{cfg.experiment.lambda_target}"
-                    f"_e{cfg.experiment.lambda_eta}.csv"
-                )
-            else:
-                trace_path = trace_dir / f"{cfg.experiment.dataset}_seed{seed}_sched{sched}.csv"
+        if sched == "controller":
+            trace_path = trace_dir / (
+                f"{cfg.experiment.dataset}_seed{seed}_t{cfg.experiment.lambda_target}"
+                f"_e{cfg.experiment.lambda_eta}.csv"
+            )
+        elif sched == "fixed":
+            # Late-phase traces for fixed weights too: the frontier analysis
+            # needs the same per-epoch record for every policy.
+            trace_path = trace_dir / (
+                f"{cfg.experiment.dataset}_seed{seed}_fixed{cfg.experiment.lambda_fixed}.csv"
+            )
+        else:
+            trace_path = trace_dir / f"{cfg.experiment.dataset}_seed{seed}_sched{sched}.csv"
         result = train_model(
             cfg,
             model,
