@@ -1,0 +1,18 @@
+% Table (number assigned by position): capacity boundary of the controller.
+% Generated from outputs_cap_full/tables/results.csv (10 paired seeds per
+% cell) by make_table_capacity.py. Cora; 8 heads throughout; total hidden
+% width = num_heads x hidden_per_head is varied.
+\begin{table}[ht]
+\tbl{The controller's effect depends on model capacity (Cora, 10 paired seeds, 2-layer GAT, 8 heads throughout; total hidden width is varied while the head count is held fixed). $\Delta$ is controller minus baseline test accuracy in percentage points, with the 95\% CI of the paired difference and a two-sided Wilcoxon signed-rank $p$-value. The last two columns give inter-head similarity at the final epoch. The controller is indistinguishable from baseline when the model is over-parameterised and significantly harmful at the narrowest width.
+\label{tab:capacity}}
+{\setlength{\tabcolsep}{3pt}\scriptsize\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccccc}
+\toprule
+Total width & Heads $\times$ dim & Params & Baseline & Controller & $\Delta$ (pp) & 95\% CI & $p$ & $d_{\mathrm{last}}$ base $\to$ ctrl \\
+\colrule
+64 & 8 $\times$ 8 & 92,373 & 81.15 $\pm$ 1.02 & 80.94 $\pm$ 1.63 & -0.21 & $[-0.63, +0.21]$ & 0.576 & 0.974 $\to$ 0.749 \\
+32 & 8 $\times$ 4 & 46,197 & 80.74 $\pm$ 1.12 & 80.60 $\pm$ 1.32 & -0.14 & $[-0.99, +0.71]$ & 0.820 & 0.977 $\to$ 0.841 \\
+16 & 8 $\times$ 2 & 23,109 & 80.60 $\pm$ 0.77 & 80.35 $\pm$ 0.72 & -0.25 & $[-0.87, +0.37]$ & 0.557 & 0.980 $\to$ 0.886 \\
+8 & 8 $\times$ 1 & 11,565 & 80.34 $\pm$ 1.23 & 79.32 $\pm$ 1.41 & -1.02 & $[-1.53, -0.51]$ & 0.012 & 0.980 $\to$ 0.896 \\
+\botrule
+\end{tabular*}}
+\end{table}

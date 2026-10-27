@@ -23,11 +23,13 @@ converted from `draft-v2-full.md`.
 | `tables/tab6_revision_cis.tex` | Table 6: main 95% CIs (revision) |
 | `tables/tab7_sensitivity.tex` | Table 7: controller sensitivity grid (η×d*, d_best semantics) |
 | `tables/tab8_h3ext.tex` | Table 8: H3 extension to Citeseer/Pubmed |
+| `tables/tab9_capacity.tex` | Table 9: capacity boundary (width 64→8, 10 paired seeds) |
 
-The zip `ijprai-submission-20260914.zip` (repo root) contains exactly these
+The zip `ijprai-submission-20261027.zip` (repo root) contains exactly these
 files (2026-09-12 layout overhaul: full-width tables, uncluttered Fig. 3/4,
-ordered appendices; 2026-09-14: affiliation corrected to Wuhan City College,
-main.pdf recompiled). Regenerate with `python build_zip.py` from the repo root.
+ordered appendices; 2026-09-14: affiliation set to Wuhan City College;
+2026-10-27: capacity-boundary section and Table 9 added, 22 pages).
+Regenerate with `python build_zip.py` from the repo root.
 `fig2_trace_citeseer_seed0.pdf` was removed in the revision (no longer
 referenced). The code repository is public at
 https://github.com/HuKejie/div-prune (cited in the manuscript, contributions

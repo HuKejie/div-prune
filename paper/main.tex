@@ -26,7 +26,7 @@
 \catchline{}{}{}{}{}
 
 \title{Feedback-Controlled Diversity Regularization for Multi-Head
-Attention: Enforcing a Similarity Budget Late in Training}
+Attention: Enforcing a Similarity Budget and the Capacity Boundary of Its Cost}
 
 \author{Kejie Hu}
 
@@ -40,28 +40,28 @@ Attention: Enforcing a Similarity Budget Late in Training}
 \end{history}
 
 \begin{abstract}
-Multi-head attention tends to learn redundant heads; training-time diversity
-penalties reduce them, but their weight is hard to set. A systematic Cora
-sweep shows no usable operating point: weights $\le 0.5$ leave inter-head
-similarity essentially unchanged (0.95--0.98), while weights $\ge 5$ move it
-substantially (0.37--0.67) at a cost of 0.7--2.9 accuracy points, the weakest
-effective weight already at the best checkpoint. We introduce a
-feedback controller treating a similarity budget as a set point, adjusting the
-regularization weight via integral control. On three
-citation networks (2-layer GATs, 10 seeds), accuracy stays within $\pm
-0.4$ points of baseline while the controller meets the budget late in
-training on Cora (0.71), approaches it on Citeseer (0.85), barely on
-Pubmed. It beats GradNorm on two of three datasets; linear and Kendall
-schedules match it. As a pruning criterion it matches standard criteria (a
-null surviving a revival test), and KD after pruning
-recovers $82.00 \pm 0.69$ on Cora, with no significant difference from
-from-scratch KD students at equal budgets; fine-tuning alone leaves a
-2.1--2.4 point gap. We claim no accuracy gains from the regularizer or
-criterion superiority, on the datasets we test.
+Fixed-weight diversity penalties for multi-head attention have no usable
+operating point: a systematic Cora sweep finds none that is both effective and
+harmless. We introduce a feedback controller that treats a target
+head-similarity budget as a set point and adjusts the regularization weight by
+integral control. The controller meets the budget late in training without
+accuracy loss, but that safety is conditional. Holding eight heads fixed and
+shrinking total hidden width from 64 to 8 (92{,}373 to 11{,}565 parameters; 10
+paired seeds), the controller matches baseline at widths 64, 32 and 16 but
+costs $1.02$~pp at width 8 (95\% CI $[-1.53, -0.51]$, $p=0.012$). Forcing heads
+apart is safe only when the model is over-parameterised; when width is too
+scarce for heads to specialise, sharing between them carries capacity the model
+uses, and decorrelation destroys it. Reducing similarity is therefore not a
+good in itself: our largest similarity reductions coincide with the worst
+accuracy. The same metric as a pruning criterion matches standard criteria, a
+null surviving a revival test, and distillation after pruning recovers
+2.1--2.4 points over fine-tuning alone. We claim no accuracy gain and report
+the capacity boundary as the condition under which the regularizer should not
+be used.
 \end{abstract}
 
 \keywords{multi-head attention; diversity regularization; feedback control;
-head pruning; knowledge distillation; graph attention networks}
+model capacity; head pruning; knowledge distillation; graph attention networks}
 
 \section{Introduction}
 
@@ -126,12 +126,21 @@ judged after retraining, not before.
   effective and harmless, and against adaptive baselines (linear,
   Kendall-style, and GradNorm schedules; 3 datasets $\times$ 10 seeds; full
   statistics in Sec.~\ref{sec:h1}, Table~\ref{tab:adaptive-baselines}).
-\item A structured-compression protocol that reuses the diversity metric as
-  the pruning criterion: with KD, pruned students show no significant
-  difference from pure-KD students at matched head budgets, and KD recovers
-  +2.1--2.4 points over fine-tuning alone ($p=0.001$, Cohen's $d \approx 2.1$;
-  Cora in the main text, Citeseer/Pubmed extension in
-  \ref{app:h3ext}).
+\item \textbf{A capacity boundary for that safety} (Sec.~\ref{sec:capacity},
+  Table~\ref{tab:capacity}). Holding eight heads fixed and shrinking total
+  hidden width from 64 to 8 (92{,}373 to 11{,}565 parameters, 10 paired seeds
+  per cell), the controller is statistically indistinguishable from baseline
+  at widths 64, 32 and 16, and significantly harmful at width 8: $-1.02$~pp
+  (95\% CI $[-1.53, -0.51]$, $p=0.012$). The "no-harm" property is therefore
+  a property of over-parameterised models, not of the controller.
+\item A mechanism consistent with this boundary, and the guidance that follows
+  from it: as width shrinks the controller moves similarity less (final-epoch
+  similarity $0.749 \to 0.896$ from the widest to the narrowest model) yet
+  costs more accuracy. Reducing similarity is not a good in itself; when width
+  is too scarce for heads to specialise, sharing between heads carries useful
+  capacity. This also explains why head-similarity methods in the literature
+  are evaluated at LLM scale, where capacity is abundant
+  (Sec.~\ref{sec:related}).
 \item A strict negative result on pruning-criterion choice at GAT scale
   (paired Wilcoxon signed-rank tests over identical seeds, effect sizes,
   multiplicity discussion), plus a mechanism consistent with the data: at the
@@ -140,15 +149,23 @@ judged after retraining, not before.
   happens. A revival test with criteria computed from late-training
   checkpoints, where the signal is differentiated, reproduces the null
   (Table~\ref{tab:revival}).
+\item A structured-compression protocol that reuses the diversity metric as
+  the pruning criterion: with KD, pruned students show no significant
+  difference from pure-KD students at matched head budgets, and KD recovers
+  +2.1--2.4 points over fine-tuning alone ($p=0.001$, Cohen's $d \approx 2.1$;
+  Cora in the main text, Citeseer/Pubmed extension in
+  \ref{app:h3ext}).
 \item Reproducible Colab-scale artifacts (T4, $<$100k parameters; protocol,
   seeds, and code at \url{https://github.com/HuKejie/div-prune}).
 \end{arabiclist}
 
 \noindent\textbf{Explicit non-claims.} We do not claim that the regularizer
-\emph{improves} accuracy (it is no-harm only); we do not claim that the
-diversity criterion is better than existing pruning criteria (the contrast is
-null); we do not claim that pruning+KD \emph{beats} pure KD (no significant
-difference is detectable, Sec.~\ref{sec:h3}). All evidence is at GAT scale on
+\emph{improves} accuracy (it is no-harm at best, and harmful at the narrowest
+width we test); we do not claim that the diversity criterion is better than
+existing pruning criteria (the contrast is null); we do not claim that
+pruning+KD \emph{beats} pure KD (no significant difference is detectable,
+Sec.~\ref{sec:h3}). We do \emph{not} claim that the controller is safe in
+general --- contribution~2 is a counterexample. All evidence is at GAT scale on
 three citation networks; transfer to other architectures is untested.
 
 \section{Related Work}
@@ -463,6 +480,47 @@ Kendall-style, and GradNorm schedules on Cora, Citeseer, and Pubmed.}
 
 \input{tables/tab4_adaptive_baselines}
 
+\subsection{When does the controller hurt? The capacity boundary}
+\label{sec:capacity}
+
+\emph{Claim tested: the "no-harm" property is a property of the
+over-parameterised regime, not of the controller.}
+
+Sections~\ref{sec:h1} establishes that the controller is harmless on a
+92{,}373-parameter model. It is natural to ask whether that safety is a
+property of the controller or of the regime, and the answer decides whether the
+method can be recommended at all. We therefore hold the head count fixed at 8,
+so that $\Ldiv$ keeps the same meaning, and shrink only the total hidden width
+$W = H \cdot d_{\mathrm{head}}$ from 64 to 8, which takes the model from
+92{,}373 to 11{,}565 parameters. Each cell is 10 paired seeds of baseline
+versus controller on Cora.
+
+Table~\ref{tab:capacity} shows a boundary, not a uniform property. At widths
+64, 32 and 16 the controller is statistically indistinguishable from baseline
+($-0.21$, $-0.14$ and $-0.25$~pp; $p = 0.576$, $0.820$ and $0.557$). At width
+8 it is significantly harmful: $-1.02$~pp (95\% CI $[-1.53, -0.51]$, two-sided
+Wilcoxon $p = 0.012$). The effect is not a smooth degradation: it is absent
+through most of the range and appears at the narrowest width we tested.
+
+Two features of the same table pin down the mechanism. First, baseline accuracy
+barely moves across the whole sweep ($81.15 \to 80.34$ over an eight-fold
+reduction in parameters), so what changes is not whether the task is solvable
+but how much the model can afford to decorrelate. Second, the controller moves
+similarity \emph{less} as width shrinks (final-epoch similarity $0.749 \to
+0.896$ from the widest to the narrowest model) while costing \emph{more}
+accuracy. A narrow model resists decorrelation and is simultaneously less able
+to absorb it. The reading we favour is that when width is too scarce for heads
+to specialise, heads must share representational work, and forcing them apart
+destroys capacity that the model is actively using.
+
+This reverses the implicit premise of diversity regularization. Reducing
+similarity is not a good in itself: across our configurations the largest
+similarity reductions coincide with the worst accuracy. The controller is
+useful for \emph{reaching} a budget, but whether that budget is worth reaching
+depends on capacity, and at the narrowest width we tested the answer is no.
+
+\input{tables/tab9_capacity}
+
 \subsection{Does the diversity criterion beat standard pruning criteria?}
 \label{sec:h2}
 
@@ -600,6 +658,20 @@ trade-off in fixed-$\lambda$ regularizers: their failure is not that
 diversity is harmful, but that a constant weight cannot target the
 late-training phase.
 
+\noindent\textbf{Why the capacity boundary matters beyond this paper.}
+Head-similarity methods are evaluated almost exclusively at LLM scale
+(Sec.~\ref{sec:related}): CHAI, DHA and ProxyAttn operate on models with
+thousands of hidden units per layer, where our sweep predicts decorrelation to
+be safe. Our results are the mirror image --- the same controller that is
+indistinguishable from baseline at 92{,}373 parameters costs 1.02 points at
+11{,}565. The gap between the two literatures is therefore not a disagreement
+about methods but a difference in regime. The practical reading is a deployment
+warning rather than a method recommendation: head-diversity regularization
+should not be carried into capacity-constrained settings --- small models, edge
+deployment, aggressively compressed architectures --- on the assumption that it
+is merely neutral. It is neutral above the boundary we locate and harmful below
+it.
+
 \noindent\textbf{Uses of the controlled quantity.} Within the scope of
 this paper, the honest answer is that we have not yet converted the
 controlled late-training similarity into a measurable downstream gain: at GAT
@@ -612,7 +684,10 @@ inference-time head fusion and clustering methods (CHAI, DHA, ProxyAttn;
 Sec.~\ref{sec:related}) exploit; those methods operate on the \emph{final}
 checkpoint, where fixed weights either never moved similarity
 ($\lambda \le 1$) or already paid for it ($\lambda \ge 5$), whereas the
-controller produces the low-similarity checkpoint at no accuracy cost. We view head-fusion
+controller produces the low-similarity checkpoint at no accuracy cost in the
+over-parameterised regime --- Sec.~\ref{sec:capacity} shows this stops holding
+once width becomes scarce, so any fusion payoff must also be verified above
+that boundary rather than assumed. We view head-fusion
 loss on controller checkpoints as the natural downstream payoff of the
 controlled quantity, and plan to test it in future work. A second applicable
 setting
@@ -620,7 +695,8 @@ is any pipeline that needs a hard similarity constraint at a late checkpoint
 (for example, before an inference-time merge step), which the integral law
 provides without hand-tuning per dataset. The setting where it is \emph{not}
 applicable is improving a single model's test accuracy: the controller is
-no-harm by design and by evidence, not an accuracy booster.
+no-harm by design and by evidence --- and harmful below the capacity boundary
+--- not an accuracy booster.
 
 \noindent\textbf{The negative criterion result.} We expected the shared-metric
 design (regularize with $\Ldiv$, prune with $\Ldiv$) to give the similarity
@@ -654,6 +730,12 @@ results and teacher checkpoints are archived.
 difference including zero at both ratios); we claim only that no significant
 difference is detectable, not equivalence. (6)~Code, protocols, seeds, and
 merged results are available at \url{https://github.com/HuKejie/div-prune}.
+(7)~The capacity boundary is located on Cora with a 2-layer GAT and is coarse:
+we observe harm at width 8 and none at width 16, so the crossing point lies
+between them and is not pinned down, and we have not tested whether the same
+width threshold transfers to other datasets, depths, or architectures. The
+boundary should be read as a demonstrated existence claim, not as a calibrated
+rule.
 
 \section{Conclusion}
 
@@ -661,28 +743,23 @@ Fixed-weight diversity regularization of multi-head attention has no operating
 point that is both effective and harmless: the weakest effective weight
 ($\lambda=5$) already enforces diversity at the best checkpoint and pays
 about 0.7 points for it. A feedback controller with a similarity budget achieves
-what no fixed weight can: the budget is enforced \emph{late} in training,
-after the best checkpoint, while accuracy stays within $\pm 0.4$ points of
-baseline. The late phase gets there on Cora (similarity 0.71), substantially
-on Citeseer (0.85), and not on Pubmed, where the similarity response is too
-slow; we document this dataset dependence rather than hide it
-(Sec.~\ref{sec:h1},
-\ref{app:sens}). Against adaptive baselines, the
-controller enforces the budget late while preserving accuracy; GradNorm
-enforces it at the best checkpoint and pays 1.1--1.8 points for it, and the
-linear and Kendall schedules match the controller's accuracy without
-enforcing the budget at the best checkpoint (Sec.~\ref{sec:h1}). The same
-similarity metric, used as a pruning criterion, performs on par with standard
-criteria, a strict negative result that survives a revival test at
-late-training checkpoints (Sec.~\ref{sec:h2}); distillation restores
-pruning loss to the level of students trained from scratch with KD at the
-same budget (no significant difference, Sec.~\ref{sec:h3}). On Pubmed at
-ratio 0.75, prune+KD (77.95) exceeds the from-scratch small model without KD
-(74.99) by about 3 points; we report this as a data point, not a claimed
-advantage, since it may combine the teacher initialization with the KD
-effect. The
-practical lesson: for small multi-head models, control the regularizer,
-not the hyperparameter; and pair any pruning criterion with KD, since KD
+what no fixed weight can, enforcing the budget \emph{late} in training while
+accuracy stays within $\pm 0.4$ points of baseline. The contribution we would
+put first, however, is not that the controller is safe but where it stops being
+safe. Holding eight heads fixed and shrinking total hidden width from 64 to 8,
+the controller is indistinguishable from baseline at widths 64, 32 and 16 and
+costs $1.02$ points at width 8 ($p=0.012$), even though it moves similarity
+\emph{less} there. Diversity regularization is safe because the models we
+regularize are over-parameterised, not because forcing heads apart is benign;
+when width is too scarce for heads to specialise, the sharing we destroy is
+capacity the model was using. That boundary also clarifies why head-similarity
+methods report gains at LLM scale while we report none at 92k parameters. The
+same similarity metric used as a pruning criterion performs on par with
+standard criteria, a null that survives a revival test, and distillation
+restores pruning loss to the level of from-scratch KD students at the same
+budget. The practical lesson we would offer is a negative one: do not assume
+head-diversity regularization is merely neutral in capacity-constrained models
+--- check the width first --- and pair any pruning criterion with KD, since KD
 dominates criterion choice at this scale.
 
 % ---------------------------------------------------------------------------
