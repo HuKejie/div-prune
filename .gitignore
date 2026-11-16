@@ -75,3 +75,4 @@ Thumbs.db
 !/foo/bar/
 /foo/bar/*
 !/foo/bar/keep.csv
+paper/experiment-plan-*.md
