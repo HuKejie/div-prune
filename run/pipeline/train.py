@@ -49,6 +49,32 @@ def _append_csv(path: Path, row: Dict) -> None:
         writer.writerow(row)
 
 
+def _resume_key(row: Dict) -> tuple:
+    """Identity of one result row, used to skip already-completed seeds on re-run.
+
+    Colab sessions die mid-job; when a job is re-run after a restart, seeds
+    already present in results.csv must not be retrained and re-appended.
+    Values are stringified so in-memory rows (floats/bools/ints) compare equal
+    to rows read back from the CSV (all strings).
+    """
+    return tuple(
+        str(row.get(k))
+        for k in (
+            "dataset", "seed", "hidden_per_head", "regularizer", "lambda_fixed",
+            "lambda_target", "lambda_eta", "lambda_schedule",
+            "prune_criterion", "prune_ratio", "distill",
+        )
+    )
+
+
+def _existing_keys(path: Path) -> set:
+    """Load resume keys from an existing results.csv (empty set if absent)."""
+    if not path.exists():
+        return set()
+    with open(path, newline="", encoding="utf-8") as f:
+        return {_resume_key(r) for r in csv.DictReader(f)}
+
+
 @hydra.main(config_path="../conf", config_name="config", version_base=None)
 def main(cfg: DictConfig) -> None:
     dataset_cls = DatasetFactory(cfg.experiment.dataset)
@@ -97,8 +123,13 @@ def main(cfg: DictConfig) -> None:
     ckpt_dir = Path(get_original_cwd()) / cfg.output_dir / "checkpoints"
     save_ckpt = bool(cfg.experiment.get("save_checkpoints", False))
 
+    done_keys = _existing_keys(results_path)
+
     for run_i in range(int(cfg.experiment.runs)):
         seed = int(cfg.seed) + run_i
+        if _resume_key({**row_base, "seed": seed}) in done_keys:
+            logger.info(f"seed={seed}: already in {results_path}, skipping (resume)")
+            continue
         set_seed(seed)
         model = ModelFactory(cfg.model.name)(model_cfg)
         trace_path = None

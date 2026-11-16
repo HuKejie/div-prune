@@ -42,7 +42,7 @@ def main(cfg: DictConfig) -> None:
 
     row_base = {
         "dataset": cfg.experiment.dataset,
-        "hidden_per_head": int(cfg.model.num_heads),
+        "hidden_per_head": int(cfg.model.d_model) // int(cfg.model.num_heads),
         "regularizer": cfg.experiment.regularizer,
         "lambda_fixed": float(cfg.experiment.lambda_fixed),
         "lambda_target": float(cfg.experiment.lambda_target),
@@ -55,16 +55,37 @@ def main(cfg: DictConfig) -> None:
         "distill_temperature": "",
     }
 
+    # Resume: skip seeds already present in results.csv (Colab restarts mid-job).
+    import csv as _csv
+
+    def _key(row):
+        return tuple(
+            str(row.get(k))
+            for k in (
+                "dataset", "seed", "hidden_per_head", "regularizer",
+                "lambda_fixed", "lambda_target", "lambda_eta",
+                "adaptive_lambda",
+            )
+        )
+
+    done_keys = set()
+    if results_path.exists():
+        with open(results_path, newline="", encoding="utf-8") as f:
+            done_keys = {_key(r) for r in _csv.DictReader(f)}
+
     for run_i in range(int(cfg.experiment.runs)):
         seed = int(cfg.seed) + run_i
+        if _key({**row_base, "seed": seed}) in done_keys:
+            logger.info(f"seed={seed}: already in {results_path}, skipping (resume)")
+            continue
         set_seed(seed)
         model = ModelFactory(cfg.model.name)(model_cfg)
         result = train_transformer(
             cfg,
             model,
             data,
-            trace_path=trace_dir / f"multi30k_seed{seed}_t{cfg.experiment.lambda_target}"
-            f"_e{cfg.experiment.lambda_eta}.csv"
+            trace_path=trace_dir / f"multi30k_seed{seed}_d{cfg.model.d_model}"
+            f"_t{cfg.experiment.lambda_target}_e{cfg.experiment.lambda_eta}.csv"
             if adaptive
             else None,
         )
