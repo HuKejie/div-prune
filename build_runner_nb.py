@@ -19,8 +19,9 @@ MD_INTRO = """# div-prune Colab runner
 **使用方法**
 1. 菜单 代码执行程序 - 更改运行时类型,选 **T4 GPU**
 2. 点击 运行全部,保持浏览器标签页打开即可
-3. 会话断开约 12 小时后重开本笔记本,再次运行全部,断点续跑自动恢复
-4. 状态查看 `colab-divprune/status.json`,任务进度看 `processed/` 文件夹
+3. **队列空闲 20 分钟后 runner 会自动停止**,不再无限空转。之后追加了新任务,重开本笔记本运行全部即可
+4. 想在任务跑完后立刻叫停: 在 `colab-divprune/` 里建一个空的 `STOP` 文件,下次启动会自动清理
+5. 状态看 `status.json`,`current=stopped` 表示正常跑完收工。任务进度看 `processed/` 文件夹
 """
 
 CODE_GPU = """import torch
@@ -40,7 +41,7 @@ print('queue root:', ROOT)
 print('queue jobs pending:', len(list((ROOT / 'queue').glob('*.json'))))
 """
 
-CODE_DEPS = """!pip install -q torch-geometric hydra-core omegaconf tqdm scipy pandas sentencepiece
+CODE_DEPS = """!pip install -q torch-geometric hydra-core omegaconf tqdm scipy pandas sentencepiece sacrebleu
 import torch_geometric, hydra, omegaconf, sentencepiece
 print('torch_geometric', torch_geometric.__version__)
 """
@@ -78,7 +79,10 @@ RESULTS, WORK = ROOT / 'results', ROOT / 'work'
 REPO = Path('/content/div-prune')
 MIRROR = WORK / 'outputs_mirror'
 SESSION = time.strftime('%Y%m%d-%H%M%S')
-IDLE_SLEEP, RUN_TIMEOUT_DEFAULT = 30, 3600
+IDLE_SLEEP = 30
+RUN_TIMEOUT_DEFAULT = 3600
+IDLE_GRACE_S = 20 * 60       # 队列持续空闲超过 20 分钟,runner 自动停止
+STOP_FILE = ROOT / 'STOP'    # 在 Drive 文件夹创建空文件可立即叫停(下次启动自动清理)
 
 
 def heartbeat(current, note=''):
@@ -159,24 +163,44 @@ def run_job(job):
 
 
 mirror_restore()
-print(f'=== runner {SESSION} 就绪,开始轮询 ===', flush=True)
+STOP_FILE.unlink(missing_ok=True)   # 每次启动从干净状态开始
+n_done = len(list(PROCESSED.glob('*.json')))
+print(f'=== runner {SESSION} 就绪,已完成 {n_done} 个任务 ===', flush=True)
+print(f'=== 队列空闲超过 {IDLE_GRACE_S} 秒将自动停止 ===', flush=True)
+idle_since = None
 while True:
+    if STOP_FILE.exists():
+        heartbeat('stopped', 'STOP file found, manual stop')
+        print('=== 检测到 STOP 文件,runner 停止 ===', flush=True)
+        break
     jobs = sorted(QUEUE.glob('*.json'), key=lambda p: p.name)
-    if not jobs:
-        heartbeat('idle', f'queue empty, {len(list(PROCESSED.glob("*.json")))} processed')
-        time.sleep(IDLE_SLEEP)
-        continue
-    for jq in jobs:
-        try:
-            job = json.loads(jq.read_text(encoding='utf-8'))
-        except Exception as e:
-            jq.rename(PROCESSED / (jq.stem + '.invalid.json'))
-            print(f'!! invalid job {jq.name}: {e}', flush=True)
-            continue
-        heartbeat(job['job_id'], jq.name)
-        status = run_job(job)
-        jq.rename(PROCESSED / f'{jq.stem}.{status}.json')
-    # 处理完一轮后再扫一次新任务
+    if jobs:
+        idle_since = None
+        for jq in jobs:
+            try:
+                job = json.loads(jq.read_text(encoding='utf-8'))
+            except Exception as e:
+                jq.rename(PROCESSED / (jq.stem + '.invalid.json'))
+                print(f'!! invalid job {jq.name}: {e}', flush=True)
+                continue
+            heartbeat(job['job_id'], jq.name)
+            status = run_job(job)
+            jq.rename(PROCESSED / f'{jq.stem}.{status}.json')
+        continue   # 一轮跑完立刻再扫,期间新入队的任务也能被接住
+    # 队列为空: 进入有限宽限期,不再无限空转
+    if idle_since is None:
+        idle_since = time.time()
+        print(f'队列已空,进入 {IDLE_GRACE_S} 秒宽限期,期间新任务仍会自动执行', flush=True)
+    waited = time.time() - idle_since
+    heartbeat('idle', f'queue empty, auto-stop in {int(IDLE_GRACE_S - waited)}s, '
+                      f'{len(list(PROCESSED.glob("*.json")))} processed')
+    if waited >= IDLE_GRACE_S:
+        heartbeat('stopped', f'queue empty for {int(waited)}s, graceful stop, '
+                             f'{len(list(PROCESSED.glob("*.json")))} processed')
+        print('=== 队列持续为空,runner 自动停止 ===', flush=True)
+        print('=== 之后追加新任务时,重开本笔记本运行全部即可 ===', flush=True)
+        break
+    time.sleep(IDLE_SLEEP)
 """
 
 CODE_STATUS = """# 快速状态面板(空闲时手动运行本单元)
