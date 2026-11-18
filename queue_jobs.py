@@ -113,12 +113,46 @@ def p2_pilot_jobs():
     return jobs
 
 
+
+def p2_full_jobs():
+    """Transformer capacity sweep, 30 epochs x 10 seeds, two extreme widths.
+
+    Uses a fresh output_dir so the 2-seed pilot rows (30-epoch, old code
+    without div_last) do not mix in. The unzip prefix refreshes code from the
+    Drive zip in an already-running Colab session.
+    """
+    jobs = []
+    refresh = (
+        "unzip -oq /content/drive/MyDrive/colab-divprune/work/div-prune-src.zip "
+        "-d /content/div-prune && "
+    )
+    for d_model in (256, 16):
+        wlab = f"d{d_model}"
+        for arm, (reg, adaptive) in {
+            "base": ("none", "false"),
+            "ctrl": ("attention", "true"),
+        }.items():
+            jid = f"050-p2full-{wlab}-{arm}"
+            cmd = (
+                refresh + "python -m run.pipeline.train_transformer model=transformer "
+                f"experiment=multi30k model.d_model={d_model} "
+                f"experiment.regularizer={reg} experiment.adaptive_lambda={adaptive} "
+                "experiment.runs=10 model.epochs=30 seed=0 "
+                "output_dir=outputs_p2_full"
+            )
+            jobs.append(job(jid, cmd, ["outputs_p2_full"],
+                             ["outputs_p2_full/tables/results.csv"],
+                             timeout_s=14400, label=f"p2 full {wlab} {arm} 10 seeds"))
+    return jobs
+
+
 BATCHES = {
     "p2_smoke": p2_smoke_jobs,
     "p1_pilot": lambda: p1_jobs(2, P1_WIDTHS_PILOT, "010-p1pilot"),
     "p1_full": lambda: p1_jobs(10, P1_WIDTHS_FULL, "020-p1full"),
     "p1_firm": p1_firm_jobs,
     "p2_pilot": p2_pilot_jobs,
+    "p2_full": p2_full_jobs,
 }
 
 

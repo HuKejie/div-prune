@@ -95,6 +95,10 @@ def train_transformer(
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.model.learning_rate)
 
     use_reg = cfg.experiment.regularizer != "none"
+    # Measure inter-head similarity every epoch for every arm (including the
+    # baseline): the capacity-boundary analysis needs the same quantity for
+    # both policies, mirroring the GAT trainer.
+    measure_div = bool(cfg.experiment.get("measure_div", True))
     lam_fixed = float(cfg.experiment.lambda_fixed)
     adaptive = bool(cfg.experiment.adaptive_lambda)
     controller = (
@@ -112,6 +116,8 @@ def train_transformer(
     div_best = float("nan")
     lam_best = lam_fixed
     trace_rows: List[Tuple[int, float, float, float]] = []
+    last_div_t = float("nan")
+    last_lam = lam_fixed
     patience_left = int(cfg.model.early_stop_patience)
     start = time.time()
 
@@ -123,7 +129,7 @@ def train_transformer(
         # Deterministic controller measurement (eval mode, no dropout).
         lam = lam_fixed
         div_t = float("nan")
-        if use_reg:
+        if (use_reg or measure_div):
             psrc, ptgt = make_batch(probe, pad, device)
             psrc_pad = make_pad_mask(psrc, pad)
             ptgt_pad = make_pad_mask(ptgt[:, :-1], pad)
@@ -137,6 +143,8 @@ def train_transformer(
                 model.train()
             if adaptive:
                 lam = controller.update(div_t)
+        last_div_t = div_t
+        last_lam = lam
 
         for i in range(0, len(train_pairs), batch_size):
             batch = train_pairs[i : i + batch_size]
@@ -190,5 +198,9 @@ def train_transformer(
         "params": float(sum(p.numel() for p in model.parameters())),
         "wall_time_s": time.time() - start,
         "lambda_final": lam_best,
+        # Similarity at the best-val checkpoint (historical name).
         "div_final": div_best,
+        # Late-phase similarity and weight, logged for every policy.
+        "div_last": last_div_t,
+        "lambda_last": last_lam,
     }
