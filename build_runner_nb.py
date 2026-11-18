@@ -18,10 +18,11 @@ MD_INTRO = """# div-prune Colab runner
 
 **使用方法**
 1. 菜单 代码执行程序 - 更改运行时类型,选 **T4 GPU**
-2. 点击 运行全部,保持浏览器标签页打开即可
-3. **队列空闲 20 分钟后 runner 会自动停止**,不再无限空转。之后追加了新任务,重开本笔记本运行全部即可
-4. 想在任务跑完后立刻叫停: 在 `colab-divprune/` 里建一个空的 `STOP` 文件,下次启动会自动清理
-5. 状态看 `status.json`,`current=stopped` 表示正常跑完收工。任务进度看 `processed/` 文件夹
+2. **只需一次**: 点左侧文件面板的「挂载云端硬盘」图标并同意授权。以后重开本笔记本 Drive 会自动挂好,不再弹授权
+3. 点击 运行全部,保持浏览器标签页打开即可。若第 2 步没做,本单元会退回手动授权并给出提示
+4. **队列空闲 20 分钟后 runner 会自动停止**,不再无限空转。之后追加了新任务,重开本笔记本运行全部即可
+5. 想在任务跑完后立刻叫停: 在 `colab-divprune/` 里建一个空的 `STOP` 文件,下次启动会自动清理
+6. 状态看 `status.json`,`current=stopped` 表示正常跑完收工。任务进度看 `processed/` 文件夹
 """
 
 CODE_GPU = """import torch
@@ -30,11 +31,19 @@ if not torch.cuda.is_available():
     print('警告: 未检测到 GPU!菜单 代码执行程序-更改运行时类型 选 T4 GPU 后重跑本单元')
 """
 
-CODE_MOUNT = """from google.colab import drive
-drive.mount('/content/drive')
-
+CODE_MOUNT = """# 优先复用 Colab 的 notebook 级自动挂载(侧边栏点过一次「挂载云端硬盘」后,
+# 重开笔记本会自动挂好),已挂载则跳过 OAuth,不再需要每次手动点同意。
 from pathlib import Path
-ROOT = Path('/content/drive/MyDrive/colab-divprune')
+from google.colab import drive
+
+MNT = Path('/content/drive')
+if not (MNT / 'MyDrive').exists():
+    print('Drive 尚未挂载,执行 drive.mount 手动授权(仅首次需要)')
+    drive.mount('/content/drive')
+else:
+    print('Drive 已由 Colab 自动挂载,跳过授权')
+
+ROOT = MNT / 'MyDrive' / 'colab-divprune'
 for sub in ('queue', 'processed', 'results', 'work'):
     (ROOT / sub).mkdir(parents=True, exist_ok=True)
 print('queue root:', ROOT)
