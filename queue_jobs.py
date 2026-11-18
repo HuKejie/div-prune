@@ -60,7 +60,7 @@ def p1_jobs(runs, widths, prefix):
 
 def p2_smoke_jobs():
     cmd = (
-        "python -m run.pipeline.train_transformer model=transformer "
+        "pip install -q sacrebleu && python -m run.pipeline.train_transformer model=transformer "
         "experiment=multi30k experiment.runs=1 model.epochs=2 seed=0 "
         "output_dir=outputs_p2_smoke"
     )
@@ -69,10 +69,56 @@ def p2_smoke_jobs():
                 label="p2 smoke")]
 
 
+
+def p1_firm_jobs():
+    """Firm up the computers w16/w8 finding and the photo w8 variance: seeds 10-19."""
+    jobs = []
+    plan = [("computers", 2), ("computers", 1), ("photo", 1)]
+    for ds, hp in plan:
+        wlab = f"w{hp*8}"
+        for arm, arm_overrides in ARMS.items():
+            jid = f"030-p1firm-{ds}-{wlab}-{arm}"
+            cmd = (
+                "python -m run.pipeline.train experiment=gat_cora "
+                f"experiment.dataset={ds} {arm_overrides} "
+                f"model.num_heads=8 model.hidden_per_head={hp} "
+                f"experiment.runs=10 seed=10 output_dir=outputs_p1"
+            )
+            jobs.append(job(jid, cmd, ["outputs_p1"],
+                             ["outputs_p1/tables/results.csv"],
+                             timeout_s=3600, label=f"p1 firm {ds} {wlab} {arm} s10-19"))
+    return jobs
+
+
+def p2_pilot_jobs():
+    """Transformer capacity pilot: d_model 256 vs 16, 2 arms, 2 seeds."""
+    jobs = []
+    for d_model in (256, 16):
+        wlab = f"d{d_model}"
+        for arm, (reg, adaptive) in {
+            "base": ("none", "false"),
+            "ctrl": ("attention", "true"),
+        }.items():
+            jid = f"040-p2pilot-{wlab}-{arm}"
+            cmd = (
+                "python -m run.pipeline.train_transformer model=transformer "
+                f"experiment=multi30k model.d_model={d_model} "
+                f"experiment.regularizer={reg} experiment.adaptive_lambda={adaptive} "
+                "experiment.runs=2 model.epochs=30 seed=0 "
+                "output_dir=outputs_p2"
+            )
+            jobs.append(job(jid, cmd, ["outputs_p2"],
+                             ["outputs_p2/tables/results.csv"],
+                             timeout_s=3600, label=f"p2 pilot {wlab} {arm}"))
+    return jobs
+
+
 BATCHES = {
     "p2_smoke": p2_smoke_jobs,
     "p1_pilot": lambda: p1_jobs(2, P1_WIDTHS_PILOT, "010-p1pilot"),
     "p1_full": lambda: p1_jobs(10, P1_WIDTHS_FULL, "020-p1full"),
+    "p1_firm": p1_firm_jobs,
+    "p2_pilot": p2_pilot_jobs,
 }
 
 
