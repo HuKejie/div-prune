@@ -179,6 +179,35 @@ def p2_mid_jobs():
     return jobs
 
 
+
+def p2_fixed_jobs():
+    """Dose control: is the d16 gain just a fixed-strength diversity regularizer?
+
+    d16 controller applied ~2-3x the lambda of other widths. If a fixed lambda
+    of the same magnitude reproduces the +2.68 BLEU, the gain is not specific to
+    feedback control. d256 at the same lambda is a negative control.
+    """
+    jobs = []
+    refresh = (
+        "unzip -oq /content/drive/MyDrive/colab-divprune/work/div-prune-src.zip "
+        "-d /content/div-prune && "
+    )
+    for d_model, lam in ((16, 0.02), (16, 0.05), (256, 0.02)):
+        jid = f"060-p2fixed-d{d_model}-lam{str(lam).replace('.', '')}"
+        cmd = (
+            refresh + "python -m run.pipeline.train_transformer model=transformer "
+            f"experiment=multi30k model.d_model={d_model} "
+            "experiment.regularizer=attention experiment.adaptive_lambda=false "
+            f"experiment.lambda_fixed={lam} "
+            "experiment.runs=10 model.epochs=30 seed=0 "
+            "output_dir=outputs_p2_fixed"
+        )
+        jobs.append(job(jid, cmd, ["outputs_p2_fixed"],
+                         ["outputs_p2_fixed/tables/results.csv"],
+                         timeout_s=14400, label=f"p2 fixed d{d_model} lam={lam}"))
+    return jobs
+
+
 BATCHES = {
     "p2_smoke": p2_smoke_jobs,
     "p1_pilot": lambda: p1_jobs(2, P1_WIDTHS_PILOT, "010-p1pilot"),
@@ -187,6 +216,7 @@ BATCHES = {
     "p2_pilot": p2_pilot_jobs,
     "p2_full": p2_full_jobs,
     "p2_mid": p2_mid_jobs,
+    "p2_fixed": p2_fixed_jobs,
 }
 
 
